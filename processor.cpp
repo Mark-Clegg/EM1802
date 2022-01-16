@@ -102,6 +102,26 @@ void Processor::XChanged()
             R[i]->setLIndicator(Qt::black);
 }
 
+void Processor::Interrupt()
+{
+    *T = (*X << 4) | *P;
+    *X = 2;
+    *P = 1;
+    *IE = false;
+}
+
+void Processor::DMAIn(uint8_t i)
+{
+    M[*R[0]] = i;
+    *R[0] = *R[0] + 1;
+}
+
+void Processor::DMAOut(uint8_t & i)
+{
+    i = M[*R[0]];
+    *R[0] = *R[0] + 1;
+}
+
 void Processor::PChanged()
 {
     // Set Coloured Indicator next to R[x]

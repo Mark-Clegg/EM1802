@@ -65,6 +65,9 @@ public slots:
     void ExecuteInstruction();
     void RunStop();
     void Load();
+    void Interrupt();
+    void DMAIn(uint8_t);
+    void DMAOut(uint8_t &);
 
 private:
     Ui::Processor *ui;

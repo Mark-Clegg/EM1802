@@ -16,6 +16,7 @@ uint8_t Memory::operator [] (uint8_t i) const
 {
     return M[i];
 }
+
 uint8_t& Memory::operator [] (uint8_t i)
 {
     return M[i];
