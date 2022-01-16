@@ -84,6 +84,7 @@ void Processor::Reset()
     *Q = 0;
     *IE = 1;
     *R[0] = 0;
+    Idle = false;
 }
 
 void Processor::Load()
@@ -108,18 +109,21 @@ void Processor::Interrupt()
     *X = 2;
     *P = 1;
     *IE = false;
+    Idle = false;
 }
 
 void Processor::DMAIn(uint8_t i)
 {
     M[*R[0]] = i;
     *R[0] = *R[0] + 1;
+    Idle = false;
 }
 
 void Processor::DMAOut(uint8_t & i)
 {
     i = M[*R[0]];
     *R[0] = *R[0] + 1;
+    Idle = false;
 }
 
 void Processor::PChanged()
@@ -150,6 +154,9 @@ void Processor::RunStop()
 
 void Processor::ExecuteInstruction()
 {
+    if(Idle)
+        return;
+
     // Fetch Instruction
 
     uint8_t Instruction = M[*R[*P]];
@@ -162,10 +169,10 @@ void Processor::ExecuteInstruction()
 
     switch(*I)
     {
-    case 0x0: /* LDN */
+    case 0x0: /* IDL / LDN */
 
         if(*N == 0)
-            *R[*P] = *R[*P] - 1;
+            Idle = true;
         else
             *D = M[*R[*N]];
         break;

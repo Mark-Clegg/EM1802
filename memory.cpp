@@ -8,7 +8,7 @@ Memory::Memory(QWidget *parent)
     M[1] = 0x23;
     M[2] = 0x7B;
     M[3] = 0x7A;
-    M[4] = 0x30;
+    M[4] = 0x00;
     M[5] = 0x00;
 }
 
