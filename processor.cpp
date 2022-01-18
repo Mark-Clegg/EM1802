@@ -2,9 +2,10 @@
 #include "ui_processor.h"
 #include <cmath>
 
-Processor::Processor(QWidget *parent) :
+Processor::Processor(QWidget *parent, Memory &RAM) :
     QDockWidget(parent),
-    ui(new Ui::Processor)
+    ui(new Ui::Processor),
+    M(RAM)
 {
     ui->setupUi(this);
 
@@ -85,6 +86,8 @@ void Processor::Reset()
     *IE = 1;
     *R[0] = 0;
     Idle = false;
+    M.setPosition(0);
+
 }
 
 void Processor::Load()
@@ -101,6 +104,16 @@ void Processor::XChanged()
             R[i]->setLIndicator(Qt::green);
         else
             R[i]->setLIndicator(Qt::black);
+}
+
+void Processor::PChanged()
+{
+    // Set Coloured Indicator next to R[x]
+    for(int i=0;i<16;i++)
+        if(i == *P)
+            R[i]->setRIndicator(Qt::red);
+        else
+            R[i]->setRIndicator(Qt::black);
 }
 
 void Processor::Interrupt()
@@ -124,16 +137,6 @@ void Processor::DMAOut(uint8_t & i)
     i = M[*R[0]];
     *R[0] = *R[0] + 1;
     Idle = false;
-}
-
-void Processor::PChanged()
-{
-    // Set Coloured Indicator next to R[x]
-    for(int i=0;i<16;i++)
-        if(i == *P)
-            R[i]->setRIndicator(Qt::red);
-        else
-            R[i]->setRIndicator(Qt::black);
 }
 
 void Processor::RunStop()
@@ -489,6 +492,7 @@ void Processor::ExecuteInstruction()
         case 0xF: /* SMI  */ *D = *D - M[*R[*P]]; *DF = (D->high() & 1)^1; *D = *D & 0xFF; *R[*P] = *R[*P] + 1; break;
         }
     }
+    M.setPosition(*R[*P]);
 }
 
 Processor::~Processor()

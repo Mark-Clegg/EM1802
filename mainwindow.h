@@ -20,6 +20,7 @@ public:
 private:
     Ui::MainWindow *ui;
     Processor *CPU;
+    Memory *RAM;
 };
 
 #endif // MAINWINDOW_H

@@ -7,11 +7,15 @@ MainWindow::MainWindow(QWidget *parent) :
 {
     ui->setupUi(this);
 
-    CPU = new Processor(this);
-    CPU->setFeatures(CPU->features() & ~QDockWidget::DockWidgetClosable);
+    RAM = new Memory(this);
+   // RAM->setFeatures(RAM->features() & ~QDockWidget::DockWidgetClosable);
+    CPU = new Processor(this, *RAM);
+   // CPU->setFeatures(CPU->features() & ~QDockWidget::DockWidgetClosable);
     CPU->setMinimumWidth(500);
+    RAM->setMinimumWidth(500);
 
     addDockWidget(Qt::RightDockWidgetArea, CPU);
+    addDockWidget(Qt::LeftDockWidgetArea, RAM);
 }
 
 MainWindow::~MainWindow()

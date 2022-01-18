@@ -27,6 +27,7 @@ HEADERS += \
 
 FORMS += \
     mainwindow.ui \
+    memory.ui \
     processor.ui
 
 # Default rules for deployment.

@@ -17,7 +17,7 @@ class Processor : public QDockWidget
     Q_OBJECT
 
 public:
-    explicit Processor(QWidget *parent = nullptr);
+    explicit Processor(QWidget *parent, Memory &);
     ~Processor();
 
     QTimer *Clock;
@@ -72,7 +72,7 @@ public slots:
 private:
     Ui::Processor *ui;
     bool Idle = false;
-    Memory M;
+    Memory &M;
 
 };
 
