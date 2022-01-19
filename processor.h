@@ -20,6 +20,7 @@ public:
     explicit Processor(QWidget *parent, Memory &);
     ~Processor();
 
+private:
     QTimer *Clock;
 
     Register *R[16];
@@ -59,12 +60,16 @@ signals:
     void Inp6(uint8_t &);
     void Inp7(uint8_t &);
 
-public slots:
+//    void Q(bool);
+
+private slots:
     void XChanged();
     void PChanged();
     void ExecuteInstruction();
     void RunStop();
     void Load();
+
+public slots:
     void Interrupt();
     void DMAIn(uint8_t);
     void DMAOut(uint8_t &);

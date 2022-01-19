@@ -36,6 +36,7 @@ private:
 
 public:
     explicit Memory(QWidget *parent = nullptr);
+    ~Memory();
     MemProxy operator [] (uint16_t) const;
     MemProxy& operator [] (uint16_t);
     void setPosition(uint16_t);

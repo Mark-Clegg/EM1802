@@ -32,11 +32,15 @@ void IndicatorLED::setText(QString s)
 
 void IndicatorLED::setOnColour(Qt::GlobalColor Colour)
 {
+    if(IconOnImage != DefaultImage)
+        delete(IconOnImage);
     IconOnImage = SelectImage(Colour);
 }
 
 void IndicatorLED::setOffColour(Qt::GlobalColor Colour)
 {
+    if(IconOffImage != DefaultImage)
+        delete(IconOffImage);
     IconOffImage = SelectImage(Colour);
 }
 
@@ -53,24 +57,14 @@ IndicatorLED::operator bool()
 
 IndicatorLED::~IndicatorLED()
 {
-    delete Icon;
-    if(DefaultImage != nullptr)
-    {
-        delete DefaultImage;
-        IconOnImage = nullptr;
-    }
-    if(IconOnImage != nullptr)
-    {
+    if(IconOnImage != DefaultImage)
         delete IconOnImage;
-        IconOnImage = nullptr;
-    }
-    if(IconOffImage != nullptr)
-    {
+    if(IconOffImage != DefaultImage)
         delete IconOffImage;
-        IconOffImage = nullptr;
-    }
-    delete Identifier;
     delete Layout;
+    delete DefaultImage;
+    delete Icon;
+    delete Identifier;
 }
 
 QImage * IndicatorLED::SelectImage(Qt::GlobalColor Colour)

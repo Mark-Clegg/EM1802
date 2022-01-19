@@ -14,8 +14,8 @@ private:
     QLabel *Icon;
     QLabel *Identifier;
     QImage *DefaultImage;
-    QImage *IconOnImage;
-    QImage *IconOffImage;
+    QImage *IconOnImage = Q_NULLPTR;
+    QImage *IconOffImage = Q_NULLPTR;;
     bool State;
     QImage *SelectImage(Qt::GlobalColor);
 

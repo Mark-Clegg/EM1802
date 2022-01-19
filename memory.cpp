@@ -8,13 +8,10 @@ Memory::Memory(QWidget *parent) :
     ui->setupUi(this);
 
     // Dummy porogram - toggle Q
-    M[0] = 0x71;
-    M[1] = 0x23;
-    M[2] = 0x7B;
-    M[3] = 0x7A;
-    M[4] = 0x00;
-    M[5] = 0x00;
-
+    M[0] = 0x7B;
+    M[1] = 0x7A;
+    M[2] = 0x30;
+    M[3] = 0x00;
 
     P = new MemProxy(M, ui);
 
@@ -86,4 +83,10 @@ void MemProxy::operator=(uint8_t value)
 MemProxy::operator uint8_t()
 {
     return M[Address];
+}
+
+Memory::~Memory()
+{
+    delete ui;
+    delete P;
 }
