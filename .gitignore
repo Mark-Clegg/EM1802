@@ -35,6 +35,8 @@ Thumbs.db
 /.qmake.cache
 /.qmake.stash
 /build-EM1802-Desktop-Profile
+/build-EM1802-Desktop-Debug
+/build-EM1802-Desktop-Release
 
 # qtcreator generated files
 *.pro.user*
