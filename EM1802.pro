@@ -15,7 +15,8 @@ SOURCES += \
     mainwindow.cpp \
     memory.cpp \
     processor.cpp \
-    register.cpp
+    register.cpp \
+    uart.cpp
 
 HEADERS += \
     externalflag.h \
@@ -23,12 +24,14 @@ HEADERS += \
     mainwindow.h \
     memory.h \
     processor.h \
-    register.h
+    register.h \
+    uart.h
 
 FORMS += \
     mainwindow.ui \
     memory.ui \
-    processor.ui
+    processor.ui \
+    uart.ui
 
 # Default rules for deployment.
 qnx: target.path = /tmp/$${TARGET}/bin

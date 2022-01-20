@@ -72,13 +72,13 @@ Processor::Processor(QWidget *parent, Memory &RAM) :
     connect(ui->ButtonRunStop, &QPushButton::toggled, this, &Processor::RunStop);
     connect(Clock, &QTimer::timeout, this, &Processor::ExecuteInstruction);
     connect(ui->ClockSpeed, &QSlider::valueChanged, this, [this](int i) { Clock->setInterval(pow(2,10-i)-1);});
-    connect(ui->ButtonReset, &QPushButton::clicked, this, &Processor::Reset);
+    connect(ui->ButtonReset, &QPushButton::clicked, this, &Processor::MasterReset);
     connect(ui->ButtonLoad, &QPushButton::clicked, this, &Processor::Load);
 
-    Reset();
+    MasterReset();
 }
 
-void Processor::Reset()
+void Processor::MasterReset()
 {
     *P = 0;
     *X = 0;
@@ -87,7 +87,7 @@ void Processor::Reset()
     *R[0] = 0;
     Idle = false;
     M.setPosition(0);
-
+    emit Reset();
 }
 
 void Processor::Load()
@@ -313,25 +313,25 @@ void Processor::ExecuteInstruction()
         switch(*N)
         {
         case 0x0: /* IRX */ *R[*X] = *R[*X] + 1; break;
-        case 0x1: /* OUT P1 */ emit Out1(*D); *R[*X] = *R[*X] + 1; break;
-        case 0x2: /* OUT P2 */ emit Out2(*D); *R[*X] = *R[*X] + 1; break;
-        case 0x3: /* OUT P3 */ emit Out3(*D); *R[*X] = *R[*X] + 1; break;
-        case 0x4: /* OUT P4 */ emit Out4(*D); *R[*X] = *R[*X] + 1; break;
-        case 0x5: /* OUT P5 */ emit Out5(*D); *R[*X] = *R[*X] + 1; break;
-        case 0x6: /* OUT P6 */ emit Out6(*D); *R[*X] = *R[*X] + 1; break;
-        case 0x7: /* OUT P7 */ emit Out7(*D); *R[*X] = *R[*X] + 1; break;
+        case 0x1: /* OUT P1 */ emit Out1(M[*R[*X]], *Q); *R[*X] = *R[*X] + 1; break;
+        case 0x2: /* OUT P2 */ emit Out2(M[*R[*X]], *Q); *R[*X] = *R[*X] + 1; break;
+        case 0x3: /* OUT P3 */ emit Out3(M[*R[*X]], *Q); *R[*X] = *R[*X] + 1; break;
+        case 0x4: /* OUT P4 */ emit Out4(M[*R[*X]], *Q); *R[*X] = *R[*X] + 1; break;
+        case 0x5: /* OUT P5 */ emit Out5(M[*R[*X]], *Q); *R[*X] = *R[*X] + 1; break;
+        case 0x6: /* OUT P6 */ emit Out6(M[*R[*X]], *Q); *R[*X] = *R[*X] + 1; break;
+        case 0x7: /* OUT P7 */ emit Out7(M[*R[*X]], *Q); *R[*X] = *R[*X] + 1; break;
 
         case 0x8: // Extended 1806 Instructions
 
             break;
 
-        case 0x9: /* INP P1 */ emit Inp1(Temp); *D = Temp; M[*R[*X]] = Temp; break;
-        case 0xA: /* INP P2 */ emit Inp2(Temp); *D = Temp; M[*R[*X]] = Temp; break;
-        case 0xB: /* INP P3 */ emit Inp3(Temp); *D = Temp; M[*R[*X]] = Temp; break;
-        case 0xC: /* INP P4 */ emit Inp4(Temp); *D = Temp; M[*R[*X]] = Temp; break;
-        case 0xD: /* INP P5 */ emit Inp5(Temp); *D = Temp; M[*R[*X]] = Temp; break;
-        case 0xE: /* INP P6 */ emit Inp6(Temp); *D = Temp; M[*R[*X]] = Temp; break;
-        case 0xF: /* INP P7 */ emit Inp7(Temp); *D = Temp; M[*R[*X]] = Temp; break;
+        case 0x9: /* INP P1 */ emit Inp1(Temp, *Q); *D = Temp; M[*R[*X]] = Temp; break;
+        case 0xA: /* INP P2 */ emit Inp2(Temp, *Q); *D = Temp; M[*R[*X]] = Temp; break;
+        case 0xB: /* INP P3 */ emit Inp3(Temp, *Q); *D = Temp; M[*R[*X]] = Temp; break;
+        case 0xC: /* INP P4 */ emit Inp4(Temp, *Q); *D = Temp; M[*R[*X]] = Temp; break;
+        case 0xD: /* INP P5 */ emit Inp5(Temp, *Q); *D = Temp; M[*R[*X]] = Temp; break;
+        case 0xE: /* INP P6 */ emit Inp6(Temp, *Q); *D = Temp; M[*R[*X]] = Temp; break;
+        case 0xF: /* INP P7 */ emit Inp7(Temp, *Q); *D = Temp; M[*R[*X]] = Temp; break;
         }
         break;
 

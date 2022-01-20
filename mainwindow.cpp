@@ -9,20 +9,31 @@ MainWindow::MainWindow(QWidget *parent) :
 
     RAM = new Memory(this);
     CPU = new Processor(this, *RAM);
+    Uart = new UART(this);
 
     addDockWidget(Qt::RightDockWidgetArea, CPU);
     addDockWidget(Qt::LeftDockWidgetArea, RAM);
+    addDockWidget(Qt::LeftDockWidgetArea, Uart);
 
     ui->Console->installEventFilter(this);
 
-    connect(this, &MainWindow::Input, this, &MainWindow::Output);
+    connect(CPU, &Processor::Reset, Uart, &UART::Reset);
+    connect(CPU, &Processor::Reset, ui->Console, [=](){ ui->Console->clear();});
+
+    connect(Uart, &UART::TxChar, this, &MainWindow::Output);
+    connect(this, &MainWindow::Input, Uart, &UART::RxChar);
+
+    connect(CPU, &Processor::Inp3, Uart, &UART::Read);
+    connect(CPU, &Processor::Out3, Uart, &UART::Write);
 }
 
 bool MainWindow::eventFilter(QObject *obj, QEvent *event)
 {
     if (event->type() == QEvent::KeyPress) {
         QKeyEvent *keyEvent = static_cast<QKeyEvent *>(event);
-        emit Input(keyEvent->text().front());
+        QString Keys = keyEvent->text();
+        if(Keys.size() > 0)
+            emit Input(Keys.front());
         return true;
     }
     else

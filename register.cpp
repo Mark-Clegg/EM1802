@@ -8,8 +8,8 @@ Register::Register(QWidget *parent)
     Layout->setContentsMargins(0,0,0,0);
 
     Identifier = new QLabel(this);
-    Identifier->setAlignment(Qt::AlignLeft);
-    Identifier->setFixedWidth(20);
+    Identifier->setAlignment(Qt::AlignCenter);
+    Identifier->setFixedWidth(30);
 
     Identifier->setText(this->objectName());
 

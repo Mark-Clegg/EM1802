@@ -41,26 +41,26 @@ private:
     ExternalFlag *EF3;
     ExternalFlag *EF4;
 
-    void Reset();
+    void MasterReset();
 
 signals:
-    void Out1(uint8_t);
-    void Out2(uint8_t);
-    void Out3(uint8_t);
-    void Out4(uint8_t);
-    void Out5(uint8_t);
-    void Out6(uint8_t);
-    void Out7(uint8_t);
+    void Reset();
 
-    void Inp1(uint8_t &);
-    void Inp2(uint8_t &);
-    void Inp3(uint8_t &);
-    void Inp4(uint8_t &);
-    void Inp5(uint8_t &);
-    void Inp6(uint8_t &);
-    void Inp7(uint8_t &);
+    void Out1(uint8_t, bool);
+    void Out2(uint8_t, bool);
+    void Out3(uint8_t, bool);
+    void Out4(uint8_t, bool);
+    void Out5(uint8_t, bool);
+    void Out6(uint8_t, bool);
+    void Out7(uint8_t, bool);
 
-//    void Q(bool);
+    void Inp1(uint8_t &, bool);
+    void Inp2(uint8_t &, bool);
+    void Inp3(uint8_t &, bool);
+    void Inp4(uint8_t &, bool);
+    void Inp5(uint8_t &, bool);
+    void Inp6(uint8_t &, bool);
+    void Inp7(uint8_t &, bool);
 
 private slots:
     void XChanged();

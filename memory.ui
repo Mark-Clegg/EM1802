@@ -13,7 +13,7 @@
   <property name="minimumSize">
    <size>
     <width>500</width>
-    <height>35</height>
+    <height>107</height>
    </size>
   </property>
   <property name="features">
@@ -23,22 +23,18 @@
    <string>Memory</string>
   </property>
   <widget class="QWidget" name="dockWidgetContents">
-   <widget class="QPlainTextEdit" name="MemoryView">
-    <property name="geometry">
-     <rect>
-      <x>0</x>
-      <y>30</y>
-      <width>481</width>
-      <height>261</height>
-     </rect>
-    </property>
-    <property name="lineWrapMode">
-     <enum>QPlainTextEdit::NoWrap</enum>
-    </property>
-    <property name="textInteractionFlags">
-     <set>Qt::TextSelectableByKeyboard|Qt::TextSelectableByMouse</set>
-    </property>
-   </widget>
+   <layout class="QGridLayout" name="gridLayout">
+    <item row="0" column="0">
+     <widget class="QPlainTextEdit" name="MemoryView">
+      <property name="lineWrapMode">
+       <enum>QPlainTextEdit::NoWrap</enum>
+      </property>
+      <property name="textInteractionFlags">
+       <set>Qt::TextSelectableByKeyboard|Qt::TextSelectableByMouse</set>
+      </property>
+     </widget>
+    </item>
+   </layout>
   </widget>
  </widget>
  <resources/>

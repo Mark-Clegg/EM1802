@@ -4,6 +4,7 @@
 #include <QMainWindow>
 #include "processor.h"
 #include "memory.h"
+#include "uart.h"
 
 namespace Ui {
 class MainWindow;
@@ -27,6 +28,7 @@ private:
     Ui::MainWindow *ui;
     Processor *CPU;
     Memory *RAM;
+    UART *Uart;
 
     bool eventFilter(QObject *obj, QEvent *event) override;
 };

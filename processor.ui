@@ -31,52 +31,164 @@
       </property>
       <layout class="QVBoxLayout" name="verticalLayout">
        <item>
-        <widget class="Register" name="R0"/>
+        <widget class="Register" name="R0">
+         <property name="minimumSize">
+          <size>
+           <width>0</width>
+           <height>22</height>
+          </size>
+         </property>
+        </widget>
        </item>
        <item>
-        <widget class="Register" name="R1"/>
+        <widget class="Register" name="R1">
+         <property name="minimumSize">
+          <size>
+           <width>0</width>
+           <height>22</height>
+          </size>
+         </property>
+        </widget>
        </item>
        <item>
-        <widget class="Register" name="R2"/>
+        <widget class="Register" name="R2">
+         <property name="minimumSize">
+          <size>
+           <width>0</width>
+           <height>22</height>
+          </size>
+         </property>
+        </widget>
        </item>
        <item>
-        <widget class="Register" name="R3"/>
+        <widget class="Register" name="R3">
+         <property name="minimumSize">
+          <size>
+           <width>0</width>
+           <height>22</height>
+          </size>
+         </property>
+        </widget>
        </item>
        <item>
-        <widget class="Register" name="R4"/>
+        <widget class="Register" name="R4">
+         <property name="minimumSize">
+          <size>
+           <width>0</width>
+           <height>22</height>
+          </size>
+         </property>
+        </widget>
        </item>
        <item>
-        <widget class="Register" name="R5"/>
+        <widget class="Register" name="R5">
+         <property name="minimumSize">
+          <size>
+           <width>0</width>
+           <height>22</height>
+          </size>
+         </property>
+        </widget>
        </item>
        <item>
-        <widget class="Register" name="R6"/>
+        <widget class="Register" name="R6">
+         <property name="minimumSize">
+          <size>
+           <width>0</width>
+           <height>22</height>
+          </size>
+         </property>
+        </widget>
        </item>
        <item>
-        <widget class="Register" name="R7"/>
+        <widget class="Register" name="R7">
+         <property name="minimumSize">
+          <size>
+           <width>0</width>
+           <height>22</height>
+          </size>
+         </property>
+        </widget>
        </item>
        <item>
-        <widget class="Register" name="R8"/>
+        <widget class="Register" name="R8">
+         <property name="minimumSize">
+          <size>
+           <width>0</width>
+           <height>22</height>
+          </size>
+         </property>
+        </widget>
        </item>
        <item>
-        <widget class="Register" name="R9"/>
+        <widget class="Register" name="R9">
+         <property name="minimumSize">
+          <size>
+           <width>0</width>
+           <height>22</height>
+          </size>
+         </property>
+        </widget>
        </item>
        <item>
-        <widget class="Register" name="RA"/>
+        <widget class="Register" name="RA">
+         <property name="minimumSize">
+          <size>
+           <width>0</width>
+           <height>22</height>
+          </size>
+         </property>
+        </widget>
        </item>
        <item>
-        <widget class="Register" name="RB"/>
+        <widget class="Register" name="RB">
+         <property name="minimumSize">
+          <size>
+           <width>0</width>
+           <height>22</height>
+          </size>
+         </property>
+        </widget>
        </item>
        <item>
-        <widget class="Register" name="RC"/>
+        <widget class="Register" name="RC">
+         <property name="minimumSize">
+          <size>
+           <width>0</width>
+           <height>22</height>
+          </size>
+         </property>
+        </widget>
        </item>
        <item>
-        <widget class="Register" name="RD"/>
+        <widget class="Register" name="RD">
+         <property name="minimumSize">
+          <size>
+           <width>0</width>
+           <height>22</height>
+          </size>
+         </property>
+        </widget>
        </item>
        <item>
-        <widget class="Register" name="RE"/>
+        <widget class="Register" name="RE">
+         <property name="minimumSize">
+          <size>
+           <width>0</width>
+           <height>22</height>
+          </size>
+         </property>
+        </widget>
        </item>
        <item>
-        <widget class="Register" name="RF"/>
+        <widget class="Register" name="RF">
+         <property name="minimumSize">
+          <size>
+           <width>0</width>
+           <height>22</height>
+          </size>
+         </property>
+        </widget>
        </item>
       </layout>
      </widget>
@@ -161,10 +273,24 @@
       </property>
       <layout class="QHBoxLayout" name="horizontalLayout" stretch="40,60">
        <item>
-        <widget class="Register" name="DF"/>
+        <widget class="Register" name="DF">
+         <property name="minimumSize">
+          <size>
+           <width>0</width>
+           <height>22</height>
+          </size>
+         </property>
+        </widget>
        </item>
        <item>
-        <widget class="Register" name="D"/>
+        <widget class="Register" name="D">
+         <property name="minimumSize">
+          <size>
+           <width>0</width>
+           <height>22</height>
+          </size>
+         </property>
+        </widget>
        </item>
       </layout>
      </widget>
@@ -213,25 +339,66 @@
       </property>
       <layout class="QVBoxLayout" name="verticalLayout_3">
        <item>
-        <widget class="Register" name="X"/>
+        <widget class="Register" name="X">
+         <property name="minimumSize">
+          <size>
+           <width>0</width>
+           <height>22</height>
+          </size>
+         </property>
+        </widget>
        </item>
        <item>
-        <widget class="Register" name="P"/>
+        <widget class="Register" name="P">
+         <property name="minimumSize">
+          <size>
+           <width>0</width>
+           <height>22</height>
+          </size>
+         </property>
+        </widget>
        </item>
        <item>
-        <widget class="Register" name="T"/>
+        <widget class="Register" name="T">
+         <property name="minimumSize">
+          <size>
+           <width>0</width>
+           <height>22</height>
+          </size>
+         </property>
+        </widget>
        </item>
        <item>
-        <widget class="Register" name="I"/>
+        <widget class="Register" name="I">
+         <property name="minimumSize">
+          <size>
+           <width>0</width>
+           <height>22</height>
+          </size>
+         </property>
+        </widget>
        </item>
        <item>
-        <widget class="Register" name="N"/>
+        <widget class="Register" name="N">
+         <property name="minimumSize">
+          <size>
+           <width>0</width>
+           <height>22</height>
+          </size>
+         </property>
+        </widget>
        </item>
       </layout>
      </widget>
     </item>
     <item row="3" column="1">
      <widget class="IndicatorLED" name="IE">
+      <property name="minimumSize">
+       <size>
+        <width>0</width>
+        <height>22</height>
+       </size>
+      </property>
       <property name="text">
        <string>IE</string>
       </property>
@@ -239,6 +406,12 @@
     </item>
     <item row="1" column="1">
      <widget class="IndicatorLED" name="Q">
+      <property name="minimumSize">
+       <size>
+        <width>0</width>
+        <height>22</height>
+       </size>
+      </property>
       <property name="text">
        <string>Q</string>
       </property>
