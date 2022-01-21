@@ -43,6 +43,9 @@ public:
     void setLIndicator(Qt::GlobalColor);
     void setRIndicator(Qt::GlobalColor);
 
+    bool isReadOnly();
+    void setReadOnly(bool);
+
     void operator=(int);
     operator int();
 

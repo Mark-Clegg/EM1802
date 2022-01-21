@@ -7,6 +7,9 @@ UART::UART(QWidget *parent) :
 {
     ui->setupUi(this);
 
+    ui->RSel->setOnColour(Qt::green);
+    ui->RSel->setOffColour(Qt::black);
+
     ui->DA->setOnColour(Qt::green);
     ui->OE->setOnColour(Qt::red);
     ui->PE->setOnColour(Qt::red);
@@ -15,6 +18,10 @@ UART::UART(QWidget *parent) :
     ui->PSI->setOnColour(Qt::green);
     ui->TSRE->setOnColour(Qt::green);
     ui->THRE->setOnColour(Qt::green);
+
+    ui->IE->setOnColour(Qt::green);
+    ui->Break->setOnColour(Qt::green);
+    ui->TR->setOnColour(Qt::green);
 }
 
 void UART::Reset()
@@ -27,6 +34,20 @@ void UART::Reset()
     *ui->PSI = false;
     *ui->TSRE = true;
     *ui->THRE = true;
+
+    *ui->TR = false;
+    *ui->Break = false;
+    *ui->IE = false;
+
+    ui->TxHR->setNibbleCount(2);
+    ui->RxHR->setNibbleCount(2);
+
+    *ui->RSel = false;
+}
+
+void UART::SetQ(bool Q)
+{
+    *ui->RSel = Q;
 }
 
 void UART::RxChar(QChar c)
@@ -35,12 +56,13 @@ void UART::RxChar(QChar c)
         *ui->OE = true;
     *ui->RxHR = c.toLatin1();
     *ui->DA = true;
-    //emit TxChar(c);
+    if(*ui->IE)
+        emit Interrupt();
 }
 
-void UART::Read(uint8_t & d, bool Q)
+void UART::Read(uint8_t & d)
 {
-    if(Q)   // Read Status Register
+    if(*ui->RSel)   // Read Status Register
     {
         d = 0;
         d |= ui->THRE ? 0x80 : 0;
@@ -60,11 +82,26 @@ void UART::Read(uint8_t & d, bool Q)
     }
 }
 
-void UART::Write(uint8_t d, bool Q)
+void UART::Write(uint8_t d)
 {
-    if(Q)   // Write Control Register
-    {
+    static QString BitString[8] = { ",5,1", ",5,1.5", ",6,1", ",6,2", ",7,1", ",7,2", ",8,1", ",8,2" };
+    static QString ParityString[4] = { "O", "E", "N", "N" };
 
+    if(*ui->RSel)   // Write Control Register
+    {
+        if(!*ui->TR || (d & 0x80) == 0x00)
+        {
+            if((d & 0x01) == 1)
+                Parity = ParityFlag::None;
+            else
+                Parity = ((d & 0x02) == 2) ? ParityFlag::Even : ParityFlag::Odd;
+
+            ui->Format->setText("9600," + ParityString[d & 0x03] + BitString[(d & 0x1C) >> 2]);
+
+            *ui->IE = (d & 0x20) == 0x20;
+            *ui->Break = (d & 0x40) == 0x40;
+            *ui->TR = (d & 0x80) == 0x80;
+        }
     }
     else    // Write Transmit Holding Register
     {

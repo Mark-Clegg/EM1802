@@ -7,7 +7,7 @@
     <x>0</x>
     <y>0</y>
     <width>693</width>
-    <height>504</height>
+    <height>240</height>
    </rect>
   </property>
   <property name="features">
@@ -17,148 +17,214 @@
    <string>CDP1854 Programmable UART</string>
   </property>
   <widget class="QWidget" name="dockWidgetContents">
-   <widget class="Register" name="TxHR">
-    <property name="geometry">
-     <rect>
-      <x>200</x>
-      <y>40</y>
-      <width>113</width>
-      <height>22</height>
-     </rect>
-    </property>
-   </widget>
-   <widget class="Register" name="RxHR">
-    <property name="geometry">
-     <rect>
-      <x>320</x>
-      <y>40</y>
-      <width>113</width>
-      <height>22</height>
-     </rect>
-    </property>
-   </widget>
-   <widget class="QGroupBox" name="groupBox">
-    <property name="geometry">
-     <rect>
-      <x>50</x>
-      <y>30</y>
-      <width>91</width>
-      <height>211</height>
-     </rect>
-    </property>
-    <property name="title">
-     <string>Status</string>
-    </property>
-    <layout class="QVBoxLayout" name="verticalLayout">
-     <property name="spacing">
-      <number>8</number>
-     </property>
-     <item>
-      <widget class="IndicatorLED" name="THRE">
-       <property name="minimumSize">
-        <size>
-         <width>0</width>
-         <height>22</height>
-        </size>
-       </property>
-       <property name="text">
-        <string>THRE</string>
-       </property>
-      </widget>
-     </item>
-     <item>
-      <widget class="IndicatorLED" name="TSRE">
-       <property name="minimumSize">
-        <size>
-         <width>0</width>
-         <height>22</height>
-        </size>
-       </property>
-       <property name="text">
-        <string>TSRE</string>
-       </property>
-      </widget>
-     </item>
-     <item>
-      <widget class="IndicatorLED" name="PSI">
-       <property name="minimumSize">
-        <size>
-         <width>0</width>
-         <height>22</height>
-        </size>
-       </property>
-       <property name="text">
-        <string>PSI</string>
-       </property>
-      </widget>
-     </item>
-     <item>
-      <widget class="IndicatorLED" name="ES">
-       <property name="minimumSize">
-        <size>
-         <width>0</width>
-         <height>22</height>
-        </size>
-       </property>
-       <property name="text">
-        <string>ES</string>
-       </property>
-      </widget>
-     </item>
-     <item>
-      <widget class="IndicatorLED" name="FE">
-       <property name="minimumSize">
-        <size>
-         <width>0</width>
-         <height>22</height>
-        </size>
-       </property>
-       <property name="text">
-        <string>FE</string>
-       </property>
-      </widget>
-     </item>
-     <item>
-      <widget class="IndicatorLED" name="PE">
-       <property name="minimumSize">
-        <size>
-         <width>0</width>
-         <height>22</height>
-        </size>
-       </property>
-       <property name="text">
-        <string>PE</string>
-       </property>
-      </widget>
-     </item>
-     <item>
-      <widget class="IndicatorLED" name="OE">
-       <property name="minimumSize">
-        <size>
-         <width>0</width>
-         <height>22</height>
-        </size>
-       </property>
-       <property name="text">
-        <string>OE</string>
-       </property>
-      </widget>
-     </item>
-     <item>
-      <widget class="IndicatorLED" name="DA">
-       <property name="minimumSize">
-        <size>
-         <width>0</width>
-         <height>22</height>
-        </size>
-       </property>
-       <property name="text">
-        <string>DA</string>
-       </property>
-      </widget>
-     </item>
-    </layout>
-   </widget>
+   <layout class="QGridLayout" name="gridLayout_2">
+    <item row="3" column="0">
+     <widget class="IndicatorLED" name="TR">
+      <property name="minimumSize">
+       <size>
+        <width>0</width>
+        <height>22</height>
+       </size>
+      </property>
+      <property name="text">
+       <string>TR</string>
+      </property>
+     </widget>
+    </item>
+    <item row="1" column="0">
+     <widget class="IndicatorLED" name="THRE">
+      <property name="minimumSize">
+       <size>
+        <width>0</width>
+        <height>22</height>
+       </size>
+      </property>
+      <property name="text">
+       <string>THRE</string>
+      </property>
+     </widget>
+    </item>
+    <item row="1" column="1">
+     <widget class="IndicatorLED" name="TSRE">
+      <property name="minimumSize">
+       <size>
+        <width>0</width>
+        <height>22</height>
+       </size>
+      </property>
+      <property name="text">
+       <string>TSRE</string>
+      </property>
+     </widget>
+    </item>
+    <item row="3" column="2">
+     <widget class="IndicatorLED" name="IE">
+      <property name="minimumSize">
+       <size>
+        <width>0</width>
+        <height>22</height>
+       </size>
+      </property>
+      <property name="text">
+       <string>IE</string>
+      </property>
+     </widget>
+    </item>
+    <item row="1" column="2">
+     <widget class="IndicatorLED" name="PSI">
+      <property name="minimumSize">
+       <size>
+        <width>0</width>
+        <height>22</height>
+       </size>
+      </property>
+      <property name="text">
+       <string>PSI</string>
+      </property>
+     </widget>
+    </item>
+    <item row="3" column="1">
+     <widget class="IndicatorLED" name="Break">
+      <property name="minimumSize">
+       <size>
+        <width>0</width>
+        <height>22</height>
+       </size>
+      </property>
+      <property name="text">
+       <string>Break</string>
+      </property>
+     </widget>
+    </item>
+    <item row="1" column="3">
+     <widget class="IndicatorLED" name="ES">
+      <property name="minimumSize">
+       <size>
+        <width>0</width>
+        <height>22</height>
+       </size>
+      </property>
+      <property name="text">
+       <string>ES</string>
+      </property>
+     </widget>
+    </item>
+    <item row="1" column="4">
+     <widget class="IndicatorLED" name="FE">
+      <property name="minimumSize">
+       <size>
+        <width>0</width>
+        <height>22</height>
+       </size>
+      </property>
+      <property name="text">
+       <string>FE</string>
+      </property>
+     </widget>
+    </item>
+    <item row="1" column="5">
+     <widget class="IndicatorLED" name="PE">
+      <property name="minimumSize">
+       <size>
+        <width>0</width>
+        <height>22</height>
+       </size>
+      </property>
+      <property name="text">
+       <string>PE</string>
+      </property>
+     </widget>
+    </item>
+    <item row="1" column="6">
+     <widget class="IndicatorLED" name="OE">
+      <property name="minimumSize">
+       <size>
+        <width>0</width>
+        <height>22</height>
+       </size>
+      </property>
+      <property name="text">
+       <string>OE</string>
+      </property>
+     </widget>
+    </item>
+    <item row="1" column="7">
+     <widget class="IndicatorLED" name="DA">
+      <property name="minimumSize">
+       <size>
+        <width>0</width>
+        <height>22</height>
+       </size>
+      </property>
+      <property name="text">
+       <string>DA</string>
+      </property>
+     </widget>
+    </item>
+    <item row="0" column="0" colspan="3">
+     <widget class="QLabel" name="label">
+      <property name="minimumSize">
+       <size>
+        <width>0</width>
+        <height>22</height>
+       </size>
+      </property>
+      <property name="text">
+       <string>Status Register</string>
+      </property>
+     </widget>
+    </item>
+    <item row="2" column="0" colspan="3">
+     <widget class="QLabel" name="label_2">
+      <property name="minimumSize">
+       <size>
+        <width>0</width>
+        <height>22</height>
+       </size>
+      </property>
+      <property name="text">
+       <string>Control Register</string>
+      </property>
+     </widget>
+    </item>
+    <item row="0" column="4" colspan="4">
+     <widget class="IndicatorLED" name="RSel">
+      <property name="minimumSize">
+       <size>
+        <width>0</width>
+        <height>22</height>
+       </size>
+      </property>
+      <property name="toolTip">
+       <string/>
+      </property>
+      <property name="text">
+       <string>Control / Status Register Select</string>
+      </property>
+     </widget>
+    </item>
+    <item row="4" column="0" colspan="3">
+     <widget class="Register" name="TxHR">
+      <property name="readOnly">
+       <bool>true</bool>
+      </property>
+     </widget>
+    </item>
+    <item row="4" column="4" colspan="3">
+     <widget class="Register" name="RxHR">
+      <property name="readOnly">
+       <bool>true</bool>
+      </property>
+     </widget>
+    </item>
+    <item row="3" column="4" colspan="3">
+     <widget class="QLabel" name="Format">
+      <property name="text">
+       <string>9600,O,5,1</string>
+      </property>
+     </widget>
+    </item>
+   </layout>
   </widget>
  </widget>
  <customwidgets>

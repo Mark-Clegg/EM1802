@@ -125,6 +125,16 @@ void Register::setRIndicator(Qt::GlobalColor c)
     RIndicator->setPalette(pal);
 }
 
+bool Register::isReadOnly()
+{
+    return RegisterValue->isReadOnly();
+}
+
+void Register::setReadOnly(bool state)
+{
+    RegisterValue->setReadOnly(state);
+}
+
 Register::~Register()
 {
     delete Identifier;
