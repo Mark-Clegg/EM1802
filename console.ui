@@ -1,38 +1,31 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <ui version="4.0">
- <class>Memory</class>
- <widget class="QDockWidget" name="Memory">
+ <class>Console</class>
+ <widget class="QDockWidget" name="Console">
   <property name="geometry">
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>500</width>
-    <height>379</height>
+    <width>400</width>
+    <height>150</height>
    </rect>
   </property>
   <property name="minimumSize">
    <size>
-    <width>490</width>
-    <height>107</height>
+    <width>400</width>
+    <height>150</height>
    </size>
   </property>
   <property name="features">
    <set>QDockWidget::NoDockWidgetFeatures</set>
   </property>
   <property name="windowTitle">
-   <string>Memory</string>
+   <string>Console</string>
   </property>
   <widget class="QWidget" name="dockWidgetContents">
    <layout class="QGridLayout" name="gridLayout">
     <item row="0" column="0">
-     <widget class="QPlainTextEdit" name="MemoryView">
-      <property name="lineWrapMode">
-       <enum>QPlainTextEdit::NoWrap</enum>
-      </property>
-      <property name="textInteractionFlags">
-       <set>Qt::TextSelectableByKeyboard|Qt::TextSelectableByMouse</set>
-      </property>
-     </widget>
+     <widget class="QPlainTextEdit" name="ScreenBuffer"/>
     </item>
    </layout>
   </widget>

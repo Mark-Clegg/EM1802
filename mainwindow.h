@@ -2,9 +2,12 @@
 #define MAINWINDOW_H
 
 #include <QMainWindow>
+#include <QSplitter>
+#include <QPlainTextEdit>
 #include "processor.h"
 #include "memory.h"
 #include "uart.h"
+#include "console.h"
 
 namespace Ui {
 class MainWindow;
@@ -18,19 +21,15 @@ public:
     explicit MainWindow(QWidget *parent = nullptr);
     ~MainWindow();
 
-signals:
-    void Input(QChar);
-
-public slots:
-    void Output(QChar);
-
 private:
     Ui::MainWindow *ui;
+    QSplitter *TopBottomSplitter;
+    QSplitter *LeftRightSplitter;
+    QSplitter *PeripheralSplitter;
     Processor *CPU;
     Memory *RAM;
     UART *Uart;
-
-    bool eventFilter(QObject *obj, QEvent *event) override;
+    Console *SerialConsole;
 };
 
 #endif // MAINWINDOW_H

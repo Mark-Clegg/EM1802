@@ -17,10 +17,10 @@
    </size>
   </property>
   <property name="features">
-   <set>QDockWidget::DockWidgetFloatable|QDockWidget::DockWidgetMovable</set>
+   <set>QDockWidget::NoDockWidgetFeatures</set>
   </property>
   <property name="windowTitle">
-   <string>Processor</string>
+   <string>CDP1802 Processor</string>
   </property>
   <widget class="QWidget" name="dockWidgetContents">
    <layout class="QGridLayout" name="gridLayout_2" columnstretch="20,40,40">

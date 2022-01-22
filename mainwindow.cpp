@@ -7,50 +7,44 @@ MainWindow::MainWindow(QWidget *parent) :
 {
     ui->setupUi(this);
 
-    RAM = new Memory(this);
-    Uart = new UART(this);
-    CPU = new Processor(this, *RAM);
+    TopBottomSplitter = new QSplitter(Qt::Vertical, this);
+    LeftRightSplitter = new QSplitter(Qt::Horizontal, TopBottomSplitter);
+    PeripheralSplitter = new QSplitter(Qt::Vertical, LeftRightSplitter);
 
-    addDockWidget(Qt::RightDockWidgetArea, CPU);
-    addDockWidget(Qt::LeftDockWidgetArea, RAM);
-    addDockWidget(Qt::LeftDockWidgetArea, Uart);
+    this->setStyleSheet("QSplitter::handle{background-color: black;}");
+    TopBottomSplitter->setChildrenCollapsible(false);
+    LeftRightSplitter->setChildrenCollapsible(false);
+    PeripheralSplitter->setChildrenCollapsible(false);
 
-    ui->Console->installEventFilter(this);
+    RAM = new Memory(PeripheralSplitter);
+    Uart = new UART(PeripheralSplitter);
+    CPU = new Processor(LeftRightSplitter, *RAM);
+    SerialConsole = new Console(TopBottomSplitter);
+
+    TopBottomSplitter->addWidget(LeftRightSplitter);
+    TopBottomSplitter->addWidget(SerialConsole);
+
+    LeftRightSplitter->addWidget(PeripheralSplitter);
+    LeftRightSplitter->addWidget(CPU);
+
+    PeripheralSplitter->addWidget(RAM);
+    PeripheralSplitter->addWidget(Uart);
+
+    setCentralWidget(TopBottomSplitter);
 
     connect(CPU, &Processor::Reset, Uart, &UART::Reset);
-    connect(CPU, &Processor::Reset, ui->Console, [=](){ ui->Console->clear();});
+    connect(CPU, &Processor::Reset, SerialConsole, &Console::Clear);
 
     connect(CPU, &Processor::QSignal, Uart, &UART::SetQ);
 
     connect(Uart, &UART::Interrupt, CPU, &Processor::Interrupt);
-    connect(Uart, &UART::TxChar, this, &MainWindow::Output);
-    connect(this, &MainWindow::Input, Uart, &UART::RxChar);
+    connect(Uart, &UART::TxChar, SerialConsole, &Console::Output);
+    connect(SerialConsole, &Console::Input, Uart, &UART::RxChar);
 
     connect(CPU, &Processor::Inp3, Uart, &UART::Read);
     connect(CPU, &Processor::Out3, Uart, &UART::Write);
 
     Uart->Reset();
-}
-
-bool MainWindow::eventFilter(QObject *obj, QEvent *event)
-{
-    if (event->type() == QEvent::KeyPress) {
-        QKeyEvent *keyEvent = static_cast<QKeyEvent *>(event);
-        QString Keys = keyEvent->text();
-        if(Keys.size() > 0)
-            emit Input(Keys.front());
-        return true;
-    }
-    else
-        return QObject::eventFilter(obj, event);
-}
-
-void MainWindow::Output(QChar c)
-{
-    QString s(c);
-    ui->Console->moveCursor(QTextCursor::End);
-    ui->Console->insertPlainText(s);
-    ui->Console->moveCursor (QTextCursor::End);
 }
 
 MainWindow::~MainWindow()
