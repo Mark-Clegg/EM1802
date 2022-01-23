@@ -492,7 +492,7 @@ void Processor::ExecuteInstruction()
         case 0xB: /* XRI  */ *D = *D ^ M[*R[*P]]; *R[*P] = *R[*P] + 1; break;
         case 0xC: /* ADI  */ *D = *D + M[*R[*P]]; *DF = D->high() & 1; *D = *D & 0xFF; *R[*P] = *R[*P] + 1; break;
         case 0xD: /* SDI  */ *D = M[*R[*P]] - *D; *DF = (D->high() & 1)^1; *D = *D & 0xFF; *R[*P] = *R[*P] + 1; break;
-        case 0xE: /* SHL  */ *D = *D << 1; *DF = D->high() & 1; break;
+        case 0xE: /* SHL  */ *D = *D << 1; *DF = D->high() & 1; *D = *D & 0xFF; break;
         case 0xF: /* SMI  */ *D = *D - M[*R[*P]]; *DF = (D->high() & 1)^1; *D = *D & 0xFF; *R[*P] = *R[*P] + 1; break;
         }
     }

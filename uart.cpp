@@ -65,14 +65,14 @@ void UART::Read(uint8_t & d)
     if(*ui->RSel)   // Read Status Register
     {
         d = 0;
-        d |= ui->THRE ? 0x80 : 0;
-        d |= ui->TSRE ? 0x40 : 0;
-        d |= ui->PSI ? 0x20 : 0;
-        d |= ui->ES ? 0x10 : 0;
-        d |= ui->FE ? 0x08 : 0;
-        d |= ui->PE ? 0x04 : 0;
-        d |= ui->OE ? 0x02 : 0;
-        d |= ui->DA ? 0x01 : 0;
+        d |= *ui->THRE ? 0x80 : 0;
+        d |= *ui->TSRE ? 0x40 : 0;
+        d |= *ui->PSI ? 0x20 : 0;
+        d |= *ui->ES ? 0x10 : 0;
+        d |= *ui->FE ? 0x08 : 0;
+        d |= *ui->PE ? 0x04 : 0;
+        d |= *ui->OE ? 0x02 : 0;
+        d |= *ui->DA ? 0x01 : 0;
     }
     else    // Read Receive Holding Register
     {
@@ -85,7 +85,7 @@ void UART::Read(uint8_t & d)
 void UART::Write(uint8_t d)
 {
     static QString BitString[8] = { ",5,1", ",5,1.5", ",6,1", ",6,2", ",7,1", ",7,2", ",8,1", ",8,2" };
-    static QString ParityString[4] = { "O", "E", "N", "N" };
+    static QString ParityString[3] = { "N", "O", "E" };
 
     if(*ui->RSel)   // Write Control Register
     {
@@ -96,7 +96,7 @@ void UART::Write(uint8_t d)
             else
                 Parity = ((d & 0x02) == 2) ? ParityFlag::Even : ParityFlag::Odd;
 
-            ui->Format->setText("9600," + ParityString[d & 0x03] + BitString[(d & 0x1C) >> 2]);
+            ui->Format->setText("9600," + ParityString[Parity] + BitString[(d & 0x1C) >> 2]);
 
             *ui->IE = (d & 0x20) == 0x20;
             *ui->Break = (d & 0x40) == 0x40;
