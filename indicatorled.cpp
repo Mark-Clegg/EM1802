@@ -22,7 +22,7 @@ IndicatorLED::IndicatorLED(QWidget *parent)
     Layout->addWidget(Identifier);
     setLayout(Layout);
 
-    QObject::connect(this, &IndicatorLED::objectNameChanged, Identifier, &QLabel::setText);
+    connect(this, &IndicatorLED::objectNameChanged, Identifier, &QLabel::setText);
 }
 
 void IndicatorLED::setText(QString s)

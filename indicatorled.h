@@ -27,7 +27,7 @@ public:
 
     void setOnColour(Qt::GlobalColor);
     void setOffColour(Qt::GlobalColor);
-;
+
     void operator=(bool);
     operator bool();
 };

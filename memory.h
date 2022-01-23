@@ -2,6 +2,12 @@
 #define MEMORY_H
 
 #include <QDockWidget>
+#include <QFileInfo>
+#include <QMessageBox>
+#include <QTextStream>
+#include <QStringRef>
+#include <QRegularExpression>
+#include <QRegularExpressionMatch>
 
 namespace Ui {
 class Memory;
@@ -33,6 +39,7 @@ private:
     Ui::Memory *ui;
     uint8_t M[65536];
     MemProxy *P;
+    void LoadIntelHex(QFile &);
 
 public:
     explicit Memory(QWidget *parent = nullptr);
@@ -44,6 +51,7 @@ public:
 signals:
 
 public slots:
+    void LoadFile(QString);
 
 };
 #endif // MEMORY_H

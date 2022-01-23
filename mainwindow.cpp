@@ -47,6 +47,15 @@ MainWindow::MainWindow(QWidget *parent) :
     Uart->Reset();
 }
 
+void MainWindow::FileOpen()
+{
+    QString fileName = QFileDialog::getOpenFileName(this,
+            "Open Memory Image", "",
+            "Intel Hex (*.hex);;Binary (*.bin)");
+    if(fileName != "")
+        RAM->LoadFile(fileName);
+}
+
 MainWindow::~MainWindow()
 {
     delete ui; ui = nullptr;

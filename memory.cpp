@@ -40,6 +40,103 @@ void Memory::setPosition(uint16_t Address)
     ui->MemoryView->setTextCursor(C);
 }
 
+void Memory::LoadFile(QString FileName)
+{
+    QFileInfo fi(FileName);
+    QString Extension = fi.completeSuffix().toLower();
+
+    QFile file(FileName);
+    if (!file.open(QIODevice::ReadOnly | QIODevice::Text))
+    {
+        QMessageBox msgBox;
+        msgBox.setText("Unable to read file.");
+        msgBox.exec();
+        return;
+    }
+
+    if(Extension == "hex")
+    {
+        LoadIntelHex(file);
+    }
+    file.close();
+}
+
+void Memory::LoadIntelHex(QFile &File)
+{
+    int Lines = 0;
+    int InvalidLines = 0;
+    int ChecksumErrors = 0;
+    int UnsupportedRecords = 0;
+
+    QRegularExpression Parser("^:(?<bytes>[0-9A-F]{2})(?<address>[0-9A-F]{4})(?<type>[0-9A-F]{2})(?<data>(?:[0-9A-F]{2})+)(?<checksum>[0-9A-F]{2})$");
+    QTextStream in(&File);
+    while (!in.atEnd()) {
+        Lines++;
+        QString line = in.readLine().toUpper();
+        QRegularExpressionMatch Match = Parser.match(line);
+        if(Match.hasMatch())
+        {
+            QVector<uint8_t> Data;
+
+            int Bytes = Match.captured("bytes").toUInt(nullptr,16);
+            int Checksum = Bytes;
+            uint16_t Address = Match.captured("address").toUInt(nullptr,16);
+            Checksum += (Address & 0xFF) + ((Address & 0xFF00) >> 8);
+            int Type = Match.captured("type").toUInt(nullptr,16);
+            Checksum += Type;
+            QString DataSegment = Match.captured("data");
+            for(int i = 0; i < Bytes; i++)
+            {
+                QStringRef DataByte(&DataSegment, i * 2, 2);
+                uint8_t Byte = DataByte.toUInt(nullptr,16);
+                Data.append(Byte);
+                Checksum += Byte;
+            }
+            int ExpectedChecksum = Match.captured("checksum").toUInt(nullptr,16);
+            Checksum = -Checksum & 0xFF;
+            if(Checksum == ExpectedChecksum)
+            {
+                switch(Type)
+                {
+                case 00: // Data record
+
+                    for(int i=0; i < Bytes; i++)
+                        (*this)[Address+i]=Data[i];
+                    break;
+
+                case 01: // EOF
+
+                    break;
+
+                default:
+
+                    UnsupportedRecords++;
+                    break;
+                }
+            }
+            else
+                ChecksumErrors ++;
+        }
+        else
+            InvalidLines++;
+    }
+    QMessageBox msgBox;
+    msgBox.setText("File Load Statistics.");
+    msgBox.setInformativeText(QString("Lines: %1\nInvalid Lines: %2\nChecksun Errors: %3\nUnsupported Records: %4")
+                              .arg(Lines)
+                              .arg(InvalidLines)
+                              .arg(ChecksumErrors)
+                              .arg(UnsupportedRecords));
+    msgBox.setIcon(QMessageBox::Information);
+    msgBox.exec();
+}
+
+Memory::~Memory()
+{
+    delete ui;
+    delete P;
+}
+
 MemProxy Memory::operator [] (uint16_t i) const
 {
     P->setAddress(i);
@@ -83,10 +180,4 @@ void MemProxy::operator=(uint8_t value)
 MemProxy::operator uint8_t()
 {
     return M[Address];
-}
-
-Memory::~Memory()
-{
-    delete ui;
-    delete P;
 }

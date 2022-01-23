@@ -4,6 +4,7 @@
 #include <QMainWindow>
 #include <QSplitter>
 #include <QPlainTextEdit>
+#include <QFileDialog>
 #include "processor.h"
 #include "memory.h"
 #include "uart.h"
@@ -20,6 +21,9 @@ class MainWindow : public QMainWindow
 public:
     explicit MainWindow(QWidget *parent = nullptr);
     ~MainWindow();
+
+public slots:
+    void FileOpen();
 
 private:
     Ui::MainWindow *ui;
