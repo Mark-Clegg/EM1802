@@ -11,7 +11,7 @@
    </rect>
   </property>
   <property name="windowTitle">
-   <string>MainWindow</string>
+   <string>EM1802 - CDP1802 Emulator</string>
   </property>
   <property name="dockNestingEnabled">
    <bool>true</bool>
@@ -30,14 +30,26 @@
    </property>
    <widget class="QMenu" name="menuFile">
     <property name="title">
-     <string>File</string>
+     <string>&amp;File</string>
     </property>
     <addaction name="actionOpen"/>
-    <addaction name="separator"/>
     <addaction name="actionExit"/>
+   </widget>
+   <widget class="QMenu" name="menuProcessor">
+    <property name="title">
+     <string>Processor</string>
+    </property>
+    <addaction name="actionRun"/>
+    <addaction name="actionStop"/>
+    <addaction name="actionStep"/>
+    <addaction name="separator"/>
+    <addaction name="actionLoad"/>
+    <addaction name="separator"/>
+    <addaction name="actionReset"/>
     <addaction name="separator"/>
    </widget>
    <addaction name="menuFile"/>
+   <addaction name="menuProcessor"/>
   </widget>
   <widget class="QStatusBar" name="statusbar"/>
   <widget class="QToolBar" name="toolBar">
@@ -54,13 +66,21 @@
     <bool>false</bool>
    </attribute>
    <addaction name="actionOpen"/>
+   <addaction name="separator"/>
+   <addaction name="actionRun"/>
+   <addaction name="actionStop"/>
+   <addaction name="actionStep"/>
+   <addaction name="separator"/>
+   <addaction name="actionLoad"/>
+   <addaction name="separator"/>
+   <addaction name="actionReset"/>
   </widget>
   <action name="actionExit">
    <property name="text">
     <string>Exit</string>
    </property>
    <property name="shortcut">
-    <string>Alt+F</string>
+    <string>Alt+X</string>
    </property>
   </action>
   <action name="actionOpen">
@@ -72,25 +92,70 @@
     <string>Open</string>
    </property>
    <property name="shortcut">
-    <string>Alt+X</string>
+    <string>Ctrl+O</string>
+   </property>
+  </action>
+  <action name="actionRun">
+   <property name="icon">
+    <iconset theme="media-playback-start">
+     <normaloff>.</normaloff>.</iconset>
+   </property>
+   <property name="text">
+    <string>Run</string>
+   </property>
+  </action>
+  <action name="actionReset">
+   <property name="icon">
+    <iconset theme="system-reboot">
+     <normaloff>.</normaloff>.</iconset>
+   </property>
+   <property name="text">
+    <string>Reset</string>
+   </property>
+  </action>
+  <action name="actionStep">
+   <property name="icon">
+    <iconset theme="media-playback-pause">
+     <normaloff>.</normaloff>.</iconset>
+   </property>
+   <property name="text">
+    <string>Step</string>
+   </property>
+  </action>
+  <action name="actionLoad">
+   <property name="icon">
+    <iconset theme="list-add">
+     <normaloff>.</normaloff>.</iconset>
+   </property>
+   <property name="text">
+    <string>Load</string>
+   </property>
+  </action>
+  <action name="actionStop">
+   <property name="icon">
+    <iconset theme="media-playback-stop">
+     <normaloff>.</normaloff>.</iconset>
+   </property>
+   <property name="text">
+    <string>Stop</string>
    </property>
   </action>
  </widget>
  <resources/>
  <connections>
   <connection>
-   <sender>toolBar</sender>
-   <signal>actionTriggered(QAction*)</signal>
+   <sender>actionOpen</sender>
+   <signal>triggered()</signal>
    <receiver>MainWindow</receiver>
    <slot>FileOpen()</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>38</x>
-     <y>46</y>
+     <x>-1</x>
+     <y>-1</y>
     </hint>
     <hint type="destinationlabel">
-     <x>128</x>
-     <y>193</y>
+     <x>509</x>
+     <y>299</y>
     </hint>
    </hints>
   </connection>

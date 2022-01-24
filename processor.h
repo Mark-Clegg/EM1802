@@ -41,7 +41,6 @@ private:
     ExternalFlag *EF3;
     ExternalFlag *EF4;
 
-    void MasterReset();
 
 signals:
     void Reset();
@@ -67,14 +66,17 @@ signals:
 private slots:
     void XChanged();
     void PChanged();
-    void ExecuteInstruction();
-    void RunStop();
-    void Load();
 
 public slots:
     void Interrupt();
     void DMAIn(uint8_t);
     void DMAOut(uint8_t &);
+
+    void ExecuteInstruction();
+    void Run();
+    void Stop();
+    void Load();
+    void MasterReset();
 
 private:
     Ui::Processor *ui;

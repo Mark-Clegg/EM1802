@@ -32,6 +32,41 @@ MainWindow::MainWindow(QWidget *parent) :
 
     setCentralWidget(TopBottomSplitter);
 
+    ui->actionRun->setEnabled(true);
+    ui->actionStop->setEnabled(false);
+    ui->actionStep->setEnabled(true);
+    ui->actionLoad->setEnabled(true);
+
+    connect(ui->actionRun, &QAction::triggered, this, [this](bool)
+    {
+        ui->actionRun->setEnabled(false);
+        ui->actionStop->setEnabled(true);
+        ui->actionStep->setEnabled(false);
+        ui->actionLoad->setEnabled(false);
+        CPU->Run();
+    });
+
+    connect(ui->actionStop, &QAction::triggered, this, [this](bool)
+    {
+        ui->actionRun->setEnabled(true);
+        ui->actionStop->setEnabled(false);
+        ui->actionStep->setEnabled(true);
+        ui->actionLoad->setEnabled(true);
+        CPU->Stop();
+    });
+
+    connect(ui->actionStep, &QAction::triggered, CPU, &Processor::ExecuteInstruction);
+    connect(ui->actionLoad, &QAction::triggered, CPU, &Processor::Load);
+
+    connect(ui->actionReset, &QAction::triggered, this, [this](bool)
+    {
+        ui->actionRun->setEnabled(true);
+        ui->actionStop->setEnabled(false);
+        ui->actionStep->setEnabled(true);
+        ui->actionLoad->setEnabled(true);
+        CPU->MasterReset();
+    });
+
     connect(CPU, &Processor::Reset, Uart, &UART::Reset);
     connect(CPU, &Processor::Reset, SerialConsole, &Console::Clear);
 

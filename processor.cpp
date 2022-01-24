@@ -68,12 +68,8 @@ Processor::Processor(QWidget *parent, Memory &RAM) :
 
     connect(X, &Register::valueChanged, this, &Processor::XChanged);
     connect(P, &Register::valueChanged, this, &Processor::PChanged);
-    connect(ui->ButtonStep, &QPushButton::clicked, this, &Processor::ExecuteInstruction);
-    connect(ui->ButtonRunStop, &QPushButton::toggled, this, &Processor::RunStop);
     connect(Clock, &QTimer::timeout, this, &Processor::ExecuteInstruction);
     connect(ui->ClockSpeed, &QSlider::valueChanged, this, [this](int i) { Clock->setInterval(pow(2,10-i)-1);});
-    connect(ui->ButtonReset, &QPushButton::clicked, this, &Processor::MasterReset);
-    connect(ui->ButtonLoad, &QPushButton::clicked, this, &Processor::Load);
 
     MasterReset();
 }
@@ -81,9 +77,6 @@ Processor::Processor(QWidget *parent, Memory &RAM) :
 void Processor::MasterReset()
 {
     Clock->stop();
-    ui->ButtonStep->setEnabled(true);
-    ui->ButtonRunStop->setText("Run");
-    ui->ButtonRunStop->setChecked(false);
     *P = 0;
     *X = 0;
     *Q = 0;
@@ -143,20 +136,15 @@ void Processor::DMAOut(uint8_t & i)
     Idle = false;
 }
 
-void Processor::RunStop()
+void Processor::Run()
 {
-    if(ui->ButtonRunStop->isChecked())
-    {
-        ui->ButtonStep->setEnabled(false);
-        ui->ButtonRunStop->setText("Stop");
-        Clock->start();
-    }
-    else
-    {
-        ui->ButtonStep->setEnabled(true);
-        ui->ButtonRunStop->setText("Run");
-        Clock->stop();
-    }
+    Idle = false;
+    Clock->start();
+}
+
+void Processor::Stop()
+{
+    Clock->stop();
 }
 
 void Processor::ExecuteInstruction()
@@ -347,18 +335,18 @@ void Processor::ExecuteInstruction()
         case 0x1: /* DIS  */ Temp = M[*R[*X]]; *R[*X] = *R[*X] + 1; *X = Temp >> 4; *P = Temp & 0xF; *IE = false; break;
         case 0x2: /* LDXA */ *D = M[*R[*X]]; *R[*X] = *R[*X] + 1; break;
         case 0x3: /* STXD */ M[*R[*X]] = *D; *R[*X] = *R[*X] - 1; break;
-        case 0x4: /* ADC  */ *D = *D + M[*R[*X]] + *DF; *DF = D->high() & 1; *D = *D & 0xFF; break;
-        case 0x5: /* SDB  */ *D = M[*R[*X]] - *D - (*DF^1); *DF = (D->high() & 1)^1; *D = *D & 0xFF; break;
+        case 0x4: /* ADC  */ D->setHigh(0); *D = *D + M[*R[*X]] + *DF; *DF = D->high() & 1; *D = *D & 0xFF; break;
+        case 0x5: /* SDB  */ D->setHigh(1); *D = M[*R[*X]] - *D - (*DF^1); *DF = (D->high() & 1)^1; *D = *D & 0xFF; break;
         case 0x6: /* SHRC */ *D = *D << 1; *D = *D + *DF; *DF = D->high() & 1; *D = *D & 0xFF; break;
-        case 0x7: /* SMB  */ *D = *D - M[*R[*X]] - (*DF^1); *DF = (D->high() & 1)^1; *D = *D & 0xFF; break;
+        case 0x7: /* SMB  */ D->setHigh(1); *D = *D - M[*R[*X]] - (*DF^1); *DF = (D->high() & 1)^1; *D = *D & 0xFF; break;
         case 0x8: /* SAV  */ M[*R[*X]] = *T; break;
         case 0x9: /* MARK */ *T = *X << 4 + *P; M[*R[2]] = *T; *P = X->value(); *R[2] = *R[2] -1; break;
         case 0xA: /* REQ  */ *Q = false; emit QSignal(false); break;
         case 0xB: /* SEQ  */ *Q = true; emit QSignal(true); break;
-        case 0xC: /* ADCI */ *D = *D + M[*R[*P]] + *DF; *DF = D->high() & 1; *D = *D & 0xFF; *R[*P] = *R[*P] +1; break;
-        case 0xD: /* SDBI */ *D = M[*R[*P]] - *D - (*DF^1); *DF = (D->high() & 1)^1; *D = *D & 0xFF; *R[*P] = *R[*P] +1; break;
+        case 0xC: /* ADCI */ D->setHigh(0); *D = *D + M[*R[*P]] + *DF; *DF = D->high() & 1; *D = *D & 0xFF; *R[*P] = *R[*P] +1; break;
+        case 0xD: /* SDBI */ D->setHigh(1); *D = M[*R[*P]] - *D - (*DF^1); *DF = (D->high() & 1)^1; *D = *D & 0xFF; *R[*P] = *R[*P] +1; break;
         case 0xE: /* SHLC */ *D = Temp = *D & 1; *D = *D >> 1; *D = *D + (*DF << 7); *DF = Temp; break;
-        case 0xF: /* SMBI */ *D = *D - M[*R[*P]] - (*DF^1); *DF = (D->high() & 1)^1; *D = *D & 0xFF; *R[*P] = *R[*P] +1; break;
+        case 0xF: /* SMBI */ D->setHigh(1); *D = *D - M[*R[*P]] - (*DF^1); *DF = (D->high() & 1)^1; *D = *D & 0xFF; *R[*P] = *R[*P] +1; break;
         }
         break;
 
@@ -482,18 +470,18 @@ void Processor::ExecuteInstruction()
         case 0x1: /* OR   */ *D = *D | M[*R[*X]]; break;
         case 0x2: /* AND  */ *D = *D & M[*R[*X]]; break;
         case 0x3: /* XOR  */ *D = *D ^ M[*R[*X]]; break;
-        case 0x4: /* ADD  */ *D = *D + M[*R[*X]]; *DF = D->high() & 1; *D = *D & 0xFF; break;
-        case 0x5: /* SD   */ *D = M[*R[*X]] - *D; *DF = (D->high() & 1)^1; *D = *D & 0xFF; break;
+        case 0x4: /* ADD  */ D->setHigh(0); *D = *D + M[*R[*X]]; *DF = D->high() & 1; *D = *D & 0xFF; break;
+        case 0x5: /* SD   */ D->setHigh(1); *D = M[*R[*X]] - *D; *DF = (D->high() & 1)^1; *D = *D & 0xFF; break;
         case 0x6: /* SHR  */ *DF = *D & 1; *D = *D >> 1; break;
-        case 0x7: /* SM   */ *D = *D - M[*R[*X]]; *DF = (D->high() & 1)^1; *D = *D & 0xFF; break;
+        case 0x7: /* SM   */ D->setHigh(1); *D = *D - M[*R[*X]]; *DF = (D->high() & 1)^1; *D = *D & 0xFF; break;
         case 0x8: /* LDI  */ *D = M[*R[*P]]; *R[*P] = *R[*P] + 1; break;
         case 0x9: /* ORI  */ *D = *D | M[*R[*P]]; *R[*P] = *R[*P] + 1; break;
         case 0xA: /* ANI  */ *D = *D & M[*R[*P]]; *R[*P] = *R[*P] + 1; break;
         case 0xB: /* XRI  */ *D = *D ^ M[*R[*P]]; *R[*P] = *R[*P] + 1; break;
-        case 0xC: /* ADI  */ *D = *D + M[*R[*P]]; *DF = D->high() & 1; *D = *D & 0xFF; *R[*P] = *R[*P] + 1; break;
-        case 0xD: /* SDI  */ *D = M[*R[*P]] - *D; *DF = (D->high() & 1)^1; *D = *D & 0xFF; *R[*P] = *R[*P] + 1; break;
+        case 0xC: /* ADI  */ D->setHigh(0); *D = *D + M[*R[*P]]; *DF = D->high() & 1; *D = *D & 0xFF; *R[*P] = *R[*P] + 1; break;
+        case 0xD: /* SDI  */ D->setHigh(1); *D = M[*R[*P]] - *D; *DF = (D->high() & 1)^1; *D = *D & 0xFF; *R[*P] = *R[*P] + 1; break;
         case 0xE: /* SHL  */ *D = *D << 1; *DF = D->high() & 1; *D = *D & 0xFF; break;
-        case 0xF: /* SMI  */ *D = *D - M[*R[*P]]; *DF = (D->high() & 1)^1; *D = *D & 0xFF; *R[*P] = *R[*P] + 1; break;
+        case 0xF: /* SMI  */ D->setHigh(1); *D = *D - M[*R[*P]]; *DF = (D->high() & 1)^1; *D = *D & 0xFF; *R[*P] = *R[*P] + 1; break;
         }
     }
     M.setPosition(*R[*P]);
