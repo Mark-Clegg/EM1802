@@ -162,6 +162,10 @@ void Processor::ExecuteInstruction()
     // Execute
     uint8_t Temp;
 
+    // Cache D and DF to avoid updating UI during execution
+    uint16_t d = *D;
+    uint16_t df = *DF;
+
     switch(*I)
     {
     case 0x0: /* IDL / LDN */
@@ -169,7 +173,7 @@ void Processor::ExecuteInstruction()
         if(*N == 0)
             Idle = true;
         else
-            *D = M[*R[*N]];
+            d = M[*R[*N]];
         break;
 
     case 0x1: /* INC */ *R[*N] = *R[*N] + 1; break;
@@ -191,7 +195,7 @@ void Processor::ExecuteInstruction()
 
         case 0x2: /* BZ */
 
-            if(*D == 0)
+            if(d == 0)
                 R[*P]->setLow(M[*R[*P]]);
             else
                 *R[*P] = *R[*P] + 1;
@@ -199,7 +203,7 @@ void Processor::ExecuteInstruction()
 
         case 0x3: /* BDF */
 
-            if(*DF)
+            if(df)
                 R[*P]->setLow(M[*R[*P]]);
             else
                 *R[*P] = *R[*P] + 1;
@@ -237,7 +241,7 @@ void Processor::ExecuteInstruction()
                 *R[*P] = *R[*P] + 1;
             break;
 
-        case 0x8: /* NBR */ *R[*P] = *R[*P] + 1; break;
+        case 0x8: /* NBR / SKP */ *R[*P] = *R[*P] + 1; break;
 
         case 0x9: /* BNQ */
             if(!*Q)
@@ -248,7 +252,7 @@ void Processor::ExecuteInstruction()
 
         case 0xA: /* BNZ */
 
-            if(*D != 0)
+            if(d != 0)
                 R[*P]->setLow(M[*R[*P]]);
             else
                 *R[*P] = *R[*P] + 1;
@@ -256,7 +260,7 @@ void Processor::ExecuteInstruction()
 
         case 0xB: /* BNF */
 
-            if(!*DF)
+            if(!df)
                 R[*P]->setLow(M[*R[*P]]);
             else
                 *R[*P] = *R[*P] + 1;
@@ -296,7 +300,7 @@ void Processor::ExecuteInstruction()
         }
         break;
 
-    case 0x4: /* LDA */ *D = M[*R[*N]]; *R[*N] = *R[*N] + 1; break;
+    case 0x4: /* LDA */ d = M[*R[*N]]; *R[*N] = *R[*N] + 1; break;
 
     case 0x5: /* STR */ M[*R[*N]] = *D; break;
 
@@ -317,13 +321,13 @@ void Processor::ExecuteInstruction()
 
             break;
 
-        case 0x9: /* INP P1 */ emit Inp1(Temp); *D = Temp; M[*R[*X]] = Temp; break;
-        case 0xA: /* INP P2 */ emit Inp2(Temp); *D = Temp; M[*R[*X]] = Temp; break;
-        case 0xB: /* INP P3 */ emit Inp3(Temp); *D = Temp; M[*R[*X]] = Temp; break;
-        case 0xC: /* INP P4 */ emit Inp4(Temp); *D = Temp; M[*R[*X]] = Temp; break;
-        case 0xD: /* INP P5 */ emit Inp5(Temp); *D = Temp; M[*R[*X]] = Temp; break;
-        case 0xE: /* INP P6 */ emit Inp6(Temp); *D = Temp; M[*R[*X]] = Temp; break;
-        case 0xF: /* INP P7 */ emit Inp7(Temp); *D = Temp; M[*R[*X]] = Temp; break;
+        case 0x9: /* INP P1 */ emit Inp1(Temp); d = Temp; M[*R[*X]] = Temp; break;
+        case 0xA: /* INP P2 */ emit Inp2(Temp); d = Temp; M[*R[*X]] = Temp; break;
+        case 0xB: /* INP P3 */ emit Inp3(Temp); d = Temp; M[*R[*X]] = Temp; break;
+        case 0xC: /* INP P4 */ emit Inp4(Temp); d = Temp; M[*R[*X]] = Temp; break;
+        case 0xD: /* INP P5 */ emit Inp5(Temp); d = Temp; M[*R[*X]] = Temp; break;
+        case 0xE: /* INP P6 */ emit Inp6(Temp); d = Temp; M[*R[*X]] = Temp; break;
+        case 0xF: /* INP P7 */ emit Inp7(Temp); d = Temp; M[*R[*X]] = Temp; break;
         }
         break;
 
@@ -333,27 +337,27 @@ void Processor::ExecuteInstruction()
         {
         case 0x0: /* RET  */ Temp = M[*R[*X]]; *R[*X] = *R[*X] + 1; *X = Temp >> 4; *P = Temp & 0xF; *IE = true; break;
         case 0x1: /* DIS  */ Temp = M[*R[*X]]; *R[*X] = *R[*X] + 1; *X = Temp >> 4; *P = Temp & 0xF; *IE = false; break;
-        case 0x2: /* LDXA */ *D = M[*R[*X]]; *R[*X] = *R[*X] + 1; break;
-        case 0x3: /* STXD */ M[*R[*X]] = *D; *R[*X] = *R[*X] - 1; break;
-        case 0x4: /* ADC  */ D->setHigh(0); *D = *D + M[*R[*X]] + *DF; *DF = D->high() & 1; *D = *D & 0xFF; break;
-        case 0x5: /* SDB  */ D->setHigh(1); *D = M[*R[*X]] - *D - (*DF^1); *DF = (D->high() & 1)^1; *D = *D & 0xFF; break;
-        case 0x6: /* SHRC */ *D = *D << 1; *D = *D + *DF; *DF = D->high() & 1; *D = *D & 0xFF; break;
-        case 0x7: /* SMB  */ D->setHigh(1); *D = *D - M[*R[*X]] - (*DF^1); *DF = (D->high() & 1)^1; *D = *D & 0xFF; break;
+        case 0x2: /* LDXA */ d = M[*R[*X]]; *R[*X] = *R[*X] + 1; break;
+        case 0x3: /* STXD */ M[*R[*X]] = d; *R[*X] = *R[*X] - 1; break;
+        case 0x4: /* ADC  */ d = d + M[*R[*X]] + df; df = d >> 8; break;
+        case 0x5: /* SDB  */ d |= 0x0100; d = M[*R[*X]] - d - (df^1); df = d >> 8; break;
+        case 0x6: /* SHRC */ d |= df << 8; df = d & 0x01; d = d >> 1; break;
+        case 0x7: /* SMB  */ d |= 0x0100; d = d - M[*R[*X]] - (df^1); df = d >> 8; break;
         case 0x8: /* SAV  */ M[*R[*X]] = *T; break;
         case 0x9: /* MARK */ *T = *X << 4 + *P; M[*R[2]] = *T; *P = X->value(); *R[2] = *R[2] -1; break;
         case 0xA: /* REQ  */ *Q = false; emit QSignal(false); break;
         case 0xB: /* SEQ  */ *Q = true; emit QSignal(true); break;
-        case 0xC: /* ADCI */ D->setHigh(0); *D = *D + M[*R[*P]] + *DF; *DF = D->high() & 1; *D = *D & 0xFF; *R[*P] = *R[*P] +1; break;
-        case 0xD: /* SDBI */ D->setHigh(1); *D = M[*R[*P]] - *D - (*DF^1); *DF = (D->high() & 1)^1; *D = *D & 0xFF; *R[*P] = *R[*P] +1; break;
-        case 0xE: /* SHLC */ *D = Temp = *D & 1; *D = *D >> 1; *D = *D + (*DF << 7); *DF = Temp; break;
-        case 0xF: /* SMBI */ D->setHigh(1); *D = *D - M[*R[*P]] - (*DF^1); *DF = (D->high() & 1)^1; *D = *D & 0xFF; *R[*P] = *R[*P] +1; break;
+        case 0xC: /* ADCI */ d = d + M[*R[*P]] + df; df = d >> 8; *R[*P] = *R[*P] +1; break;
+        case 0xD: /* SDBI */ d |= 0x0100; d = M[*R[*P]] - d - (df^1); df = d >> 8; *R[*P] = *R[*P] +1; break;
+        case 0xE: /* SHLC */ d = (d << 1) + df; df = d >> 8; break;
+        case 0xF: /* SMBI */ d |= 0x0100; d = d - M[*R[*P]] - (df^1); df = d >> 8; *R[*P] = *R[*P] +1; break;
         }
         break;
 
-    case 0x8: /* GLO */ *D = R[*N]->low(); break;
-    case 0x9: /* GHI */ *D = R[*N]->high(); break;
-    case 0xA: /* PLO */ R[*N]->setLow(*D); break;
-    case 0xB: /* PHI */ R[*N]->setHigh(*D); break;
+    case 0x8: /* GLO */ d = R[*N]->low(); break;
+    case 0x9: /* GHI */ d = R[*N]->high(); break;
+    case 0xA: /* PLO */ R[*N]->setLow(d); break;
+    case 0xB: /* PHI */ R[*N]->setHigh(d); break;
 
     case 0xC: /* Long Branch / Skip */
 
@@ -370,7 +374,7 @@ void Processor::ExecuteInstruction()
 
         case 0x2: /* LBZ  */
 
-            if(*D == 0)
+            if(d == 0)
                 *R[*P] = (M[*R[*P]] << 8) + M[*R[*P + 1]];
             else
                 *R[*P] = *R[*P] + 2;
@@ -378,7 +382,7 @@ void Processor::ExecuteInstruction()
 
         case 0x3: /* LBDF */
 
-            if(*DF)
+            if(df)
                 *R[*P] = (M[*R[*P]] << 8) + M[*R[*P + 1]];
             else
                 *R[*P] = *R[*P] + 2;
@@ -394,13 +398,13 @@ void Processor::ExecuteInstruction()
 
         case 0x6: /* LSNZ */
 
-            if(*D != 0)
+            if(d != 0)
                 *R[*P] = *R[*P] + 2;
             break;
 
         case 0x7: /* LSNF  */
 
-            if(!*DF)
+            if(!df)
                 *R[*P] = *R[*P] + 2;
             break;
 
@@ -419,7 +423,7 @@ void Processor::ExecuteInstruction()
 
         case 0xA: /* LBNZ */
 
-            if(*D != 0)
+            if(d != 0)
                 *R[*P] = (M[*R[*P]] << 8) + M[*R[*P + 1]];
             else
                 *R[*P] = *R[*P] + 2;
@@ -427,7 +431,7 @@ void Processor::ExecuteInstruction()
 
         case 0xB: /* LBNF */
 
-            if(*DF != 0)
+            if(df != 0)
                 *R[*P] = (M[*R[*P]] << 8) + M[*R[*P + 1]];
             else
                 *R[*P] = *R[*P] + 2;
@@ -447,13 +451,13 @@ void Processor::ExecuteInstruction()
 
         case 0xE: /* LSZ  */
 
-            if(*D == 0)
+            if(d == 0)
                 *R[*P] = *R[*P] + 2;
             break;
 
         case 0xF: /* LSDF */
 
-            if(*DF == 1)
+            if(df == 1)
                 *R[*P] = *R[*P] + 2;
             break;
         }
@@ -466,24 +470,27 @@ void Processor::ExecuteInstruction()
 
         switch(*N)
         {
-        case 0x0: /* LDX  */ *D = M[*R[*X]]; break;
-        case 0x1: /* OR   */ *D = *D | M[*R[*X]]; break;
-        case 0x2: /* AND  */ *D = *D & M[*R[*X]]; break;
-        case 0x3: /* XOR  */ *D = *D ^ M[*R[*X]]; break;
-        case 0x4: /* ADD  */ D->setHigh(0); *D = *D + M[*R[*X]]; *DF = D->high() & 1; *D = *D & 0xFF; break;
-        case 0x5: /* SD   */ D->setHigh(1); *D = M[*R[*X]] - *D; *DF = (D->high() & 1)^1; *D = *D & 0xFF; break;
-        case 0x6: /* SHR  */ *DF = *D & 1; *D = *D >> 1; break;
-        case 0x7: /* SM   */ D->setHigh(1); *D = *D - M[*R[*X]]; *DF = (D->high() & 1)^1; *D = *D & 0xFF; break;
-        case 0x8: /* LDI  */ *D = M[*R[*P]]; *R[*P] = *R[*P] + 1; break;
-        case 0x9: /* ORI  */ *D = *D | M[*R[*P]]; *R[*P] = *R[*P] + 1; break;
-        case 0xA: /* ANI  */ *D = *D & M[*R[*P]]; *R[*P] = *R[*P] + 1; break;
-        case 0xB: /* XRI  */ *D = *D ^ M[*R[*P]]; *R[*P] = *R[*P] + 1; break;
-        case 0xC: /* ADI  */ D->setHigh(0); *D = *D + M[*R[*P]]; *DF = D->high() & 1; *D = *D & 0xFF; *R[*P] = *R[*P] + 1; break;
-        case 0xD: /* SDI  */ D->setHigh(1); *D = M[*R[*P]] - *D; *DF = (D->high() & 1)^1; *D = *D & 0xFF; *R[*P] = *R[*P] + 1; break;
-        case 0xE: /* SHL  */ *D = *D << 1; *DF = D->high() & 1; *D = *D & 0xFF; break;
-        case 0xF: /* SMI  */ D->setHigh(1); *D = *D - M[*R[*P]]; *DF = (D->high() & 1)^1; *D = *D & 0xFF; *R[*P] = *R[*P] + 1; break;
+        case 0x0: /* LDX  */ d = M[*R[*X]]; break;
+        case 0x1: /* OR   */ d = d | M[*R[*X]]; break;
+        case 0x2: /* AND  */ d = d & M[*R[*X]]; break;
+        case 0x3: /* XOR  */ d = d ^ M[*R[*X]]; break;
+        case 0x4: /* ADD  */ d = d + M[*R[*X]]; df = d >> 8; break;
+        case 0x5: /* SD   */ d |= 0x0100; d = M[*R[*X]] - d; df = d >> 8; break;
+        case 0x6: /* SHR  */ df = d & 1; d = d >> 1; break;
+        case 0x7: /* SM   */ d |= 0x0100; d = d - M[*R[*X]]; df = d >> 8; break;
+        case 0x8: /* LDI  */ d = M[*R[*P]]; *R[*P] = *R[*P] + 1; break;
+        case 0x9: /* ORI  */ d = d | M[*R[*P]]; *R[*P] = *R[*P] + 1; break;
+        case 0xA: /* ANI  */ d = d & M[*R[*P]]; *R[*P] = *R[*P] + 1; break;
+        case 0xB: /* XRI  */ d = d ^ M[*R[*P]]; *R[*P] = *R[*P] + 1; break;
+        case 0xC: /* ADI  */ d = d + M[*R[*P]]; df = d >> 8; *R[*P] = *R[*P] + 1; break;
+        case 0xD: /* SDI  */ d |= 0x0100; d = M[*R[*P]] - d; df = d >> 8; *R[*P] = *R[*P] + 1; break;
+        case 0xE: /* SHL  */ d = d << 1;  df = d >> 8; break;
+        case 0xF: /* SMI  */ d |= 0x0100; d = d - M[*R[*P]]; df = d >> 8; *R[*P] = *R[*P] + 1; break;
         }
     }
+    // Update D and DF in the UI
+    *D = d & 0xFF;
+    *DF = df & 0x01;
     M.setPosition(*R[*P]);
 }
 

@@ -7,6 +7,11 @@ Console::Console(QWidget *parent) :
 {
     ui->setupUi(this);
     ui->ScreenBuffer->installEventFilter(this);
+
+    QTextDocument *doc = ui->ScreenBuffer->document();
+    QFont font = doc->defaultFont();
+    font.setFamily("Courier New");
+    doc->setDefaultFont(font);
 }
 
 bool Console::eventFilter(QObject *obj, QEvent *event)
@@ -24,6 +29,9 @@ bool Console::eventFilter(QObject *obj, QEvent *event)
 
 void Console::Output(QChar c)
 {
+    if(c == '\r' || c == '\0')
+        return;
+
     QString s(c);
     ui->ScreenBuffer->moveCursor(QTextCursor::End);
     ui->ScreenBuffer->insertPlainText(s);
