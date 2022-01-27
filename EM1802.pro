@@ -45,5 +45,6 @@ RESOURCES += \
     Resources.qrc
 
 DISTFILES += \
+    LICENSE \
     README.md \
     idiot4.hex
