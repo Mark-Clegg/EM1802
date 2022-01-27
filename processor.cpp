@@ -344,7 +344,7 @@ void Processor::ExecuteInstruction()
         case 0x6: /* SHRC */ d |= df << 8; df = d & 0x01; d = d >> 1; break;
         case 0x7: /* SMB  */ d |= 0x0100; d = d - M[*R[*X]] - (df^1); df = d >> 8; break;
         case 0x8: /* SAV  */ M[*R[*X]] = *T; break;
-        case 0x9: /* MARK */ *T = *X << 4 + *P; M[*R[2]] = *T; *P = X->value(); *R[2] = *R[2] -1; break;
+        case 0x9: /* MARK */ *T = (*X << 4) + *P; M[*R[2]] = *T; *P = X->value(); *R[2] = *R[2] -1; break;
         case 0xA: /* REQ  */ *Q = false; emit QSignal(false); break;
         case 0xB: /* SEQ  */ *Q = true; emit QSignal(true); break;
         case 0xC: /* ADCI */ d = d + M[*R[*P]] + df; df = d >> 8; *R[*P] = *R[*P] +1; break;
