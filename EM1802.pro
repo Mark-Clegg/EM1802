@@ -45,4 +45,5 @@ RESOURCES += \
     Resources.qrc
 
 DISTFILES += \
-    README.md
+    README.md \
+    idiot4.hex

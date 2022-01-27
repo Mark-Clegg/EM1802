@@ -344,7 +344,7 @@ void Processor::ExecuteInstruction()
         case 0x6: /* SHRC */ d |= df << 8; df = d & 0x01; d = d >> 1; break;
         case 0x7: /* SMB  */ d |= 0x0100; d = d - M[*R[*X]] - (df^1); df = d >> 8; break;
         case 0x8: /* SAV  */ M[*R[*X]] = *T; break;
-        case 0x9: /* MARK */ *T = (*X << 4) + *P; M[*R[2]] = *T; *P = X->value(); *R[2] = *R[2] -1; break;
+        case 0x9: /* MARK */ *T = (*X << 4) + *P; M[*R[2]] = *T; *X = P->value(); *R[2] = *R[2] -1; break;
         case 0xA: /* REQ  */ *Q = false; emit QSignal(false); break;
         case 0xB: /* SEQ  */ *Q = true; emit QSignal(true); break;
         case 0xC: /* ADCI */ d = d + M[*R[*P]] + df; df = d >> 8; *R[*P] = *R[*P] +1; break;
@@ -363,11 +363,11 @@ void Processor::ExecuteInstruction()
 
         switch(*N)
         {
-        case 0x0: /* LBR  */ *R[*P] = (M[*R[*P]] << 8) + M[*R[*P + 1]]; break;
+        case 0x0: /* LBR  */ *R[*P] = (M[*R[*P]] << 8) + M[*R[*P] + 1]; break;
         case 0x1: /* LBQ  */
 
             if(*Q)
-                *R[*P] = (M[*R[*P]] << 8) + M[*R[*P + 1]];
+                *R[*P] = (M[*R[*P]] << 8) + M[*R[*P] + 1];
             else
                 *R[*P] = *R[*P] + 2;
             break;
@@ -375,7 +375,7 @@ void Processor::ExecuteInstruction()
         case 0x2: /* LBZ  */
 
             if(d == 0)
-                *R[*P] = (M[*R[*P]] << 8) + M[*R[*P + 1]];
+                *R[*P] = (M[*R[*P]] << 8) + M[*R[*P] + 1];
             else
                 *R[*P] = *R[*P] + 2;
             break;
@@ -383,7 +383,7 @@ void Processor::ExecuteInstruction()
         case 0x3: /* LBDF */
 
             if(df)
-                *R[*P] = (M[*R[*P]] << 8) + M[*R[*P + 1]];
+                *R[*P] = (M[*R[*P]] << 8) + M[*R[*P] + 1];
             else
                 *R[*P] = *R[*P] + 2;
             break;
@@ -416,7 +416,7 @@ void Processor::ExecuteInstruction()
         case 0x9: /* LBNQ */
 
             if(!*Q)
-                *R[*P] = (M[*R[*P]] << 8) + M[*R[*P + 1]];
+                *R[*P] = (M[*R[*P]] << 8) + M[*R[*P] + 1];
             else
                 *R[*P] = *R[*P] + 2;
             break;
@@ -424,15 +424,15 @@ void Processor::ExecuteInstruction()
         case 0xA: /* LBNZ */
 
             if(d != 0)
-                *R[*P] = (M[*R[*P]] << 8) + M[*R[*P + 1]];
+                *R[*P] = (M[*R[*P]] << 8) + M[*R[*P] + 1];
             else
                 *R[*P] = *R[*P] + 2;
             break;
 
         case 0xB: /* LBNF */
 
-            if(df != 0)
-                *R[*P] = (M[*R[*P]] << 8) + M[*R[*P + 1]];
+            if(!df)
+                *R[*P] = (M[*R[*P]] << 8) + M[*R[*P] + 1];
             else
                 *R[*P] = *R[*P] + 2;
             break;
