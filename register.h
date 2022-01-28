@@ -11,7 +11,7 @@ class Register : public QWidget
 private:
     union {
         uint16_t Word;
-        struct __attribute__ ((packed)) {
+        struct /* __attribute__ ((packed)) */ {
             uint8_t LowByte;
             uint8_t HighByte;
         };
