@@ -3,6 +3,7 @@
 
 #include <QDockWidget>
 #include <QTimer>
+#include <QPlainTextEdit>
 #include "register.h"
 #include "indicatorled.h"
 #include "externalflag.h"
@@ -22,6 +23,9 @@ public:
 
 private:
     QTimer *Clock;
+    QString Disassemble(uint16_t, int);
+    QString DisassemblyLine(const int &, const QStringList &, const QString &, const QStringList &);
+    const QString DisassemblyTemplate;
 
     Register *R[16];
 

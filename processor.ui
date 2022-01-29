@@ -6,14 +6,14 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>400</width>
-    <height>520</height>
+    <width>450</width>
+    <height>540</height>
    </rect>
   </property>
   <property name="minimumSize">
    <size>
-    <width>400</width>
-    <height>520</height>
+    <width>450</width>
+    <height>540</height>
    </size>
   </property>
   <property name="features">
@@ -24,77 +24,14 @@
   </property>
   <widget class="QWidget" name="dockWidgetContents">
    <layout class="QGridLayout" name="gridLayout_2" columnstretch="20,40,40">
-    <item row="3" column="1">
-     <widget class="IndicatorLED" name="IE">
-      <property name="minimumSize">
-       <size>
-        <width>0</width>
-        <height>22</height>
-       </size>
-      </property>
-      <property name="text">
-       <string>IE</string>
-      </property>
-     </widget>
-    </item>
-    <item row="0" column="0">
-     <widget class="QGroupBox" name="groupBox_2">
+    <item row="7" column="0" colspan="2">
+     <widget class="QGroupBox" name="groupBox_4">
       <property name="title">
-       <string>Flags</string>
+       <string>Accumulator</string>
       </property>
-      <layout class="QVBoxLayout" name="verticalLayout_2">
+      <layout class="QHBoxLayout" name="horizontalLayout" stretch="40,60">
        <item>
-        <widget class="ExternalFlag" name="EF1">
-         <property name="text">
-          <string>EF1</string>
-         </property>
-        </widget>
-       </item>
-       <item>
-        <widget class="ExternalFlag" name="EF2">
-         <property name="text">
-          <string>EF2</string>
-         </property>
-        </widget>
-       </item>
-       <item>
-        <widget class="ExternalFlag" name="EF3">
-         <property name="text">
-          <string>EF3</string>
-         </property>
-        </widget>
-       </item>
-       <item>
-        <widget class="ExternalFlag" name="EF4">
-         <property name="text">
-          <string>EF4</string>
-         </property>
-        </widget>
-       </item>
-      </layout>
-     </widget>
-    </item>
-    <item row="4" column="0" colspan="2">
-     <spacer name="verticalSpacer">
-      <property name="orientation">
-       <enum>Qt::Vertical</enum>
-      </property>
-      <property name="sizeHint" stdset="0">
-       <size>
-        <width>20</width>
-        <height>40</height>
-       </size>
-      </property>
-     </spacer>
-    </item>
-    <item row="0" column="1">
-     <widget class="QGroupBox" name="groupBox_3">
-      <property name="title">
-       <string>Control</string>
-      </property>
-      <layout class="QVBoxLayout" name="verticalLayout_3">
-       <item>
-        <widget class="Register" name="X">
+        <widget class="Register" name="DF">
          <property name="minimumSize">
           <size>
            <width>0</width>
@@ -104,37 +41,7 @@
         </widget>
        </item>
        <item>
-        <widget class="Register" name="P">
-         <property name="minimumSize">
-          <size>
-           <width>0</width>
-           <height>22</height>
-          </size>
-         </property>
-        </widget>
-       </item>
-       <item>
-        <widget class="Register" name="T">
-         <property name="minimumSize">
-          <size>
-           <width>0</width>
-           <height>22</height>
-          </size>
-         </property>
-        </widget>
-       </item>
-       <item>
-        <widget class="Register" name="I">
-         <property name="minimumSize">
-          <size>
-           <width>0</width>
-           <height>22</height>
-          </size>
-         </property>
-        </widget>
-       </item>
-       <item>
-        <widget class="Register" name="N">
+        <widget class="Register" name="D">
          <property name="minimumSize">
           <size>
            <width>0</width>
@@ -146,7 +53,7 @@
       </layout>
      </widget>
     </item>
-    <item row="0" column="2" rowspan="9">
+    <item row="0" column="2" rowspan="11">
      <widget class="QGroupBox" name="groupBox">
       <property name="title">
        <string>Registers</string>
@@ -315,49 +222,7 @@
       </layout>
      </widget>
     </item>
-    <item row="6" column="0" colspan="2">
-     <widget class="QGroupBox" name="groupBox_4">
-      <property name="title">
-       <string>Accumulator</string>
-      </property>
-      <layout class="QHBoxLayout" name="horizontalLayout" stretch="40,60">
-       <item>
-        <widget class="Register" name="DF">
-         <property name="minimumSize">
-          <size>
-           <width>0</width>
-           <height>22</height>
-          </size>
-         </property>
-        </widget>
-       </item>
-       <item>
-        <widget class="Register" name="D">
-         <property name="minimumSize">
-          <size>
-           <width>0</width>
-           <height>22</height>
-          </size>
-         </property>
-        </widget>
-       </item>
-      </layout>
-     </widget>
-    </item>
-    <item row="1" column="1">
-     <widget class="IndicatorLED" name="Q">
-      <property name="minimumSize">
-       <size>
-        <width>0</width>
-        <height>22</height>
-       </size>
-      </property>
-      <property name="text">
-       <string>Q</string>
-      </property>
-     </widget>
-    </item>
-    <item row="7" column="0" colspan="2">
+    <item row="9" column="0" colspan="2">
      <widget class="QSlider" name="ClockSpeed">
       <property name="toolTip">
        <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Processor speed&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
@@ -379,6 +244,138 @@
       </property>
       <property name="tickPosition">
        <enum>QSlider::TicksBothSides</enum>
+      </property>
+     </widget>
+    </item>
+    <item row="0" column="1">
+     <widget class="QGroupBox" name="groupBox_3">
+      <property name="title">
+       <string>Control</string>
+      </property>
+      <layout class="QVBoxLayout" name="verticalLayout_3">
+       <item>
+        <widget class="Register" name="X">
+         <property name="minimumSize">
+          <size>
+           <width>0</width>
+           <height>22</height>
+          </size>
+         </property>
+        </widget>
+       </item>
+       <item>
+        <widget class="Register" name="P">
+         <property name="minimumSize">
+          <size>
+           <width>0</width>
+           <height>22</height>
+          </size>
+         </property>
+        </widget>
+       </item>
+       <item>
+        <widget class="Register" name="T">
+         <property name="minimumSize">
+          <size>
+           <width>0</width>
+           <height>22</height>
+          </size>
+         </property>
+        </widget>
+       </item>
+       <item>
+        <widget class="Register" name="I">
+         <property name="minimumSize">
+          <size>
+           <width>0</width>
+           <height>22</height>
+          </size>
+         </property>
+        </widget>
+       </item>
+       <item>
+        <widget class="Register" name="N">
+         <property name="minimumSize">
+          <size>
+           <width>0</width>
+           <height>22</height>
+          </size>
+         </property>
+        </widget>
+       </item>
+      </layout>
+     </widget>
+    </item>
+    <item row="3" column="0">
+     <widget class="IndicatorLED" name="Q">
+      <property name="minimumSize">
+       <size>
+        <width>0</width>
+        <height>22</height>
+       </size>
+      </property>
+      <property name="text">
+       <string>Q</string>
+      </property>
+     </widget>
+    </item>
+    <item row="4" column="0">
+     <widget class="IndicatorLED" name="IE">
+      <property name="minimumSize">
+       <size>
+        <width>0</width>
+        <height>22</height>
+       </size>
+      </property>
+      <property name="text">
+       <string>IE</string>
+      </property>
+     </widget>
+    </item>
+    <item row="0" column="0">
+     <widget class="QGroupBox" name="groupBox_2">
+      <property name="title">
+       <string>Flags</string>
+      </property>
+      <layout class="QVBoxLayout" name="verticalLayout_2">
+       <item>
+        <widget class="ExternalFlag" name="EF1">
+         <property name="text">
+          <string>EF1</string>
+         </property>
+        </widget>
+       </item>
+       <item>
+        <widget class="ExternalFlag" name="EF2">
+         <property name="text">
+          <string>EF2</string>
+         </property>
+        </widget>
+       </item>
+       <item>
+        <widget class="ExternalFlag" name="EF3">
+         <property name="text">
+          <string>EF3</string>
+         </property>
+        </widget>
+       </item>
+       <item>
+        <widget class="ExternalFlag" name="EF4">
+         <property name="text">
+          <string>EF4</string>
+         </property>
+        </widget>
+       </item>
+      </layout>
+     </widget>
+    </item>
+    <item row="8" column="0" colspan="2">
+     <widget class="QPlainTextEdit" name="Disassembly">
+      <property name="lineWrapMode">
+       <enum>QPlainTextEdit::NoWrap</enum>
+      </property>
+      <property name="readOnly">
+       <bool>false</bool>
       </property>
      </widget>
     </item>

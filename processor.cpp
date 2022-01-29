@@ -2,12 +2,23 @@
 #include "ui_processor.h"
 #include <cmath>
 
+#define DisassemblerLines 7
+
 Processor::Processor(QWidget *parent, Memory &RAM) :
     QDockWidget(parent),
+    DisassemblyTemplate("ADDR  -- -- -- --  START --------"),
     ui(new Ui::Processor),
     M(RAM)
 {
     ui->setupUi(this);
+
+    QTextDocument *Doc = ui->Disassembly->document();
+    QFont font = Doc->defaultFont();
+    font.setFamily("Courier New");
+    Doc->setDefaultFont(font);
+
+    QFontMetrics fm(font);
+    ui->Disassembly->setMinimumWidth(fm.horizontalAdvance(DisassemblyTemplate)+35);
 
     Clock = new QTimer(this);
     Clock->setInterval(1023);
@@ -84,6 +95,15 @@ void Processor::MasterReset()
     *R[0] = 0;
     Idle = false;
     M.setPosition(0);
+    ui->Disassembly->clear();
+    ui->Disassembly->appendPlainText(DisassemblyTemplate);
+    ui->Disassembly->appendPlainText(Disassemble(*R[*P], DisassemblerLines - 1));
+    QTextCursor C = ui->Disassembly->textCursor();
+    C.setPosition(0);
+    C.movePosition(QTextCursor::Down, QTextCursor::MoveAnchor);
+    C.movePosition(QTextCursor::EndOfLine, QTextCursor::KeepAnchor);
+    ui->Disassembly->setTextCursor(C);
+
     emit Reset();
 }
 
@@ -492,6 +512,25 @@ void Processor::ExecuteInstruction()
     *D = d & 0xFF;
     *DF = df & 0x01;
     M.setPosition(*R[*P]);
+
+    // Update Disassembly
+    QTextCursor C = ui->Disassembly->textCursor();
+    C.setPosition(0);
+    C.movePosition(QTextCursor::Down, QTextCursor::KeepAnchor);
+    C.removeSelectedText();
+
+    C.movePosition(QTextCursor::EndOfLine, QTextCursor::MoveAnchor);
+    C.movePosition(QTextCursor::End, QTextCursor::KeepAnchor);
+    C.removeSelectedText();
+
+    ui->Disassembly->appendPlainText(Disassemble(*R[*P], DisassemblerLines - 1));
+
+    C.setPosition(0);
+    C.movePosition(QTextCursor::Down, QTextCursor::MoveAnchor);
+    C.movePosition(QTextCursor::EndOfLine, QTextCursor::KeepAnchor);
+    ui->Disassembly->setTextCursor(C);
+
+
 }
 
 Processor::~Processor()

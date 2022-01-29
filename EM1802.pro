@@ -16,6 +16,7 @@ SOURCES += \
     mainwindow.cpp \
     memory.cpp \
     processor.cpp \
+    processor_disassembler.cpp \
     register.cpp \
     uart.cpp
 

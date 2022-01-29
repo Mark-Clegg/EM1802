@@ -120,15 +120,19 @@ void Memory::LoadIntelHex(QFile &File)
         else
             InvalidLines++;
     }
-    QMessageBox msgBox;
-    msgBox.setText("File Load Statistics.");
-    msgBox.setInformativeText(QString("Lines: %1\nInvalid Lines: %2\nChecksun Errors: %3\nUnsupported Records: %4")
-                              .arg(Lines)
-                              .arg(InvalidLines)
-                              .arg(ChecksumErrors)
-                              .arg(UnsupportedRecords));
-    msgBox.setIcon(QMessageBox::Information);
-    msgBox.exec();
+
+    if(InvalidLines>0 || ChecksumErrors>0 || UnsupportedRecords>>0)
+    {
+        QMessageBox msgBox;
+        msgBox.setText("File Load Statistics.");
+        msgBox.setInformativeText(QString("Lines: %1\nInvalid Lines: %2\nChecksun Errors: %3\nUnsupported Records: %4")
+                                  .arg(Lines)
+                                  .arg(InvalidLines)
+                                  .arg(ChecksumErrors)
+                                  .arg(UnsupportedRecords));
+        msgBox.setIcon(QMessageBox::Information);
+        msgBox.exec();
+    }
 }
 
 Memory::~Memory()

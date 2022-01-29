@@ -89,6 +89,11 @@ void MainWindow::FileOpen()
             "Intel Hex (*.hex);;Binary (*.bin)");
     if(fileName != "")
         RAM->LoadFile(fileName);
+    ui->actionRun->setEnabled(true);
+    ui->actionStop->setEnabled(false);
+    ui->actionStep->setEnabled(true);
+    ui->actionLoad->setEnabled(true);
+    CPU->MasterReset();
 }
 
 MainWindow::~MainWindow()
