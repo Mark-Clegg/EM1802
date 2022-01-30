@@ -6,7 +6,7 @@
 
 Processor::Processor(QWidget *parent, Memory &RAM) :
     QDockWidget(parent),
-    DisassemblyTemplate("ADDR  -- -- -- --  START --------"),
+    DisassemblyTemplate("ADDR  -- -- -- --  OPCODE--------"),
     ui(new Ui::Processor),
     M(RAM)
 {
