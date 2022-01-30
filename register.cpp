@@ -31,7 +31,8 @@ Register::Register(QWidget *parent)
     Layout->addWidget(RIndicator);
     setLayout(Layout);
 
-    QObject::connect(RegisterValue, &QLineEdit::editingFinished, this, &Register::set);
+//    QObject::connect(RegisterValue, &QLineEdit::editingFinished, this, &Register::set);
+    QObject::connect(RegisterValue, &QLineEdit::textEdited, this, &Register::set);
     QObject::connect(this, &Register::objectNameChanged, Identifier, &QLabel::setText);
 }
 

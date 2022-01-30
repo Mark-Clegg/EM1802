@@ -247,5 +247,4 @@ QString Processor::DisassemblyLine(const int &Addr, const QStringList &CodeBytes
                 .arg(CodeBytes.join(QChar(' ')), -11)
                 .arg(OpCode, -4)
                 .arg(Operands.join(QString(", ")), -8);
-
 }
