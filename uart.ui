@@ -217,10 +217,17 @@
       </property>
      </widget>
     </item>
-    <item row="3" column="4" colspan="3">
+    <item row="3" column="4" colspan="2">
      <widget class="QLabel" name="Format">
       <property name="text">
        <string>9600,O,5,1</string>
+      </property>
+     </widget>
+    </item>
+    <item row="3" column="6" colspan="2">
+     <widget class="IndicatorLED" name="InterruptFlag">
+      <property name="text">
+       <string>Interrupt</string>
       </property>
      </widget>
     </item>

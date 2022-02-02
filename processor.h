@@ -13,6 +13,21 @@ namespace Ui {
 class Processor;
 }
 
+enum ProcessorType {
+    CDP1802,
+    CDP1806,
+    CDP1806A
+};
+
+enum CounterModeEnum {
+    CounterModeStopped,
+    CounterModeEventCounter1,
+    CounterModeEventCounter2,
+    CounterModeTimer,
+    CounterModePulseMeasure1,
+    CounterModePulseMeasure2
+};
+
 class Processor : public QDockWidget
 {
     Q_OBJECT
@@ -21,11 +36,23 @@ public:
     explicit Processor(QWidget *parent, Memory &);
     ~Processor();
 
+    void SetType(enum ProcessorType);
+
 private:
     QTimer *Clock;
+    void IllegalInstruction();
     QString Disassemble(uint16_t, int);
     QString DisassemblyLine(const int &, const QStringList &, const QString &, const QStringList &);
     const QString DisassemblyTemplate;
+
+    int ExternalInterrupt = 0;
+    bool CounterInterrupt = false;
+    bool CounterToggleQ = false;
+
+    CounterModeEnum CounterMode = CounterModeStopped;
+    uint8_t CounterHoldingRegister;
+
+    enum ProcessorType ProcessorType = CDP1802;
 
     Register *R[16];
 
@@ -36,9 +63,12 @@ private:
     Register *N;
     Register *I;
     Register *DF;
+    Register *Counter;
 
     IndicatorLED *Q;
     IndicatorLED *IE;
+    IndicatorLED *XIE;
+    IndicatorLED *CIE;
 
     ExternalFlag *EF1;
     ExternalFlag *EF2;
@@ -48,6 +78,7 @@ private:
 
 signals:
     void Reset();
+    void Break(QString);
 
     void Out1(uint8_t);
     void Out2(uint8_t);
@@ -72,7 +103,7 @@ private slots:
     void PChanged();
 
 public slots:
-    void Interrupt();
+    void Interrupt(bool);
     void DMAIn(uint8_t);
     void DMAOut(uint8_t &);
 

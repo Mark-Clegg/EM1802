@@ -32,6 +32,13 @@ MainWindow::MainWindow(QWidget *parent) :
 
     setCentralWidget(TopBottomSplitter);
 
+    ProcessorTypeActionGroup = new QActionGroup(this);
+    ProcessorTypeActionGroup->addAction(ui->actionCDP1802);
+    ProcessorTypeActionGroup->addAction(ui->actionCDP1806);
+    ProcessorTypeActionGroup->addAction(ui->actionCDP1806A);
+    ProcessorTypeActionGroup->setExclusive(true);
+    ui->actionCDP1802->setChecked(true);
+
     ui->actionRun->setEnabled(true);
     ui->actionStop->setEnabled(false);
     ui->actionStep->setEnabled(true);
@@ -67,8 +74,23 @@ MainWindow::MainWindow(QWidget *parent) :
         CPU->MasterReset();
     });
 
+    connect(ui->actionCDP1802,  &QAction::toggled, this, [this](bool state){ if(state) CPU->SetType(CDP1802);});
+    connect(ui->actionCDP1806,  &QAction::toggled, this, [this](bool state){ if(state) CPU->SetType(CDP1806);});
+    connect(ui->actionCDP1806A, &QAction::toggled, this, [this](bool state){ if(state) CPU->SetType(CDP1806A);});
+
     connect(CPU, &Processor::Reset, Uart, &UART::Reset);
     connect(CPU, &Processor::Reset, SerialConsole, &Console::Clear);
+
+    connect(CPU, &Processor::Break, this, [this](QString Reason)
+    {
+        ui->actionRun->setEnabled(true);
+        ui->actionStop->setEnabled(false);
+        ui->actionStep->setEnabled(true);
+        ui->actionLoad->setEnabled(true);
+        QMessageBox msgBox;
+        msgBox.setText(Reason);
+        msgBox.exec();
+    });
 
     connect(CPU, &Processor::QSignal, Uart, &UART::SetQ);
 

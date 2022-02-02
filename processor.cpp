@@ -20,6 +20,8 @@ Processor::Processor(QWidget *parent, Memory &RAM) :
     QFontMetrics fm(font);
     ui->Disassembly->setMinimumWidth(fm.horizontalAdvance(DisassemblyTemplate)+35);
 
+    ui->CDP1806->setVisible(false);
+
     Clock = new QTimer(this);
     Clock->setInterval(1023);
 
@@ -55,6 +57,10 @@ Processor::Processor(QWidget *parent, Memory &RAM) :
 
     Q = ui->Q;
     IE = ui->IE;
+    XIE = ui->XIE;
+    CIE = ui->CIE;
+
+    Counter = ui->Cntr;
 
     D->setNibbleCount(2);
     DF->setNibbleCount(1);
@@ -64,6 +70,7 @@ Processor::Processor(QWidget *parent, Memory &RAM) :
     T->setNibbleCount(2);
     N->setNibbleCount(1);
     I->setNibbleCount(1);
+    Counter->setNibbleCount(2);
 
     X->setLIndicator(Qt::green);
     X->setRIndicator(Qt::green);
@@ -76,6 +83,12 @@ Processor::Processor(QWidget *parent, Memory &RAM) :
 
     IE->setOnColour(Qt::green);
     IE->setOffColour(Qt::red);
+
+    XIE->setOnColour(Qt::green);
+    XIE->setOffColour(Qt::red);
+
+    CIE->setOnColour(Qt::green);
+    CIE->setOffColour(Qt::red);
 
     connect(X, &Register::valueChanged, this, &Processor::XChanged);
     connect(P, &Register::valueChanged, this, &Processor::PChanged);
@@ -92,8 +105,14 @@ void Processor::MasterReset()
     *X = 0;
     *Q = 0;
     *IE = 1;
+    *XIE = 1;
+    *CIE = 1;
+    CounterMode = CounterModeStopped;
     *R[0] = 0;
     Idle = false;
+    ExternalInterrupt = 0;
+    CounterInterrupt = false;;
+    CounterToggleQ = false;
     M.setPosition(0);
     ui->Disassembly->clear();
     ui->Disassembly->appendPlainText(DisassemblyTemplate);
@@ -105,6 +124,13 @@ void Processor::MasterReset()
     ui->Disassembly->setTextCursor(C);
 
     emit Reset();
+}
+
+void Processor::SetType(enum ProcessorType ProcessorType)
+{
+    this->ProcessorType = ProcessorType;
+
+    ui->CDP1806->setVisible(ProcessorType != CDP1802);
 }
 
 void Processor::Load()
@@ -133,13 +159,13 @@ void Processor::PChanged()
             R[i]->setRIndicator(Qt::black);
 }
 
-void Processor::Interrupt()
+void Processor::Interrupt(bool State)
 {
-    *T = (*X << 4) | *P;
-    *X = 2;
-    *P = 1;
-    *IE = false;
-    Idle = false;
+    if(State)
+        ExternalInterrupt ++;
+    else
+        if(ExternalInterrupt > 0)
+            ExternalInterrupt --;
 }
 
 void Processor::DMAIn(uint8_t i)
@@ -167,8 +193,24 @@ void Processor::Stop()
     Clock->stop();
 }
 
+void Processor::IllegalInstruction()
+{
+    Clock->stop();
+    *R[*P] = *R[*P] - 1;
+    emit Break("Illegal Instruction: 68");
+}
+
 void Processor::ExecuteInstruction()
 {
+    if(*IE && ((*XIE && ExternalInterrupt > 0) | (*CIE && CounterInterrupt)))
+    {
+        *T = (*X << 4) | *P;
+        *X = 2;
+        *P = 1;
+        *IE = false;
+        Idle = false;
+    }
+
     if(Idle)
         return;
 
@@ -339,15 +381,181 @@ void Processor::ExecuteInstruction()
 
         case 0x8: // Extended 1806 Instructions
 
+            if(ProcessorType == CDP1802)
+                IllegalInstruction();
+            else
+            {
+                Instruction = M[*R[*P]];
+                *R[*P] = *R[*P] + 1;
+                *N = Instruction & 0x0F;
+                *I = Instruction >> 4;
+
+                switch(*I)
+                {
+                case 0x0: /* Counter Timer */
+
+                    switch(*N)
+                    {
+                    case 0x0: /* STPC */ CounterMode = CounterModeStopped; break;
+                    case 0x1: /* DTC  */
+
+                        *Counter = *Counter - 1; break;
+                    case 0x2: /* SPM2 */ CounterMode = CounterModePulseMeasure2; break;
+                    case 0x3: /* SCM2 */ CounterMode = CounterModeEventCounter2; break;
+                    case 0x4: /* SPM1 */ CounterMode = CounterModePulseMeasure1; break;
+                    case 0x5: /* SCM1 */ CounterMode = CounterModeEventCounter1; break;
+
+                    case 0x6: /* LDC  */
+
+                        *Counter = D->value();
+                        if(CounterMode == CounterModeStopped)
+                        {
+                            CounterHoldingRegister = D->value();
+                            CounterInterrupt = false;
+                            CounterToggleQ = false;
+                        }
+                        break;
+
+                    case 0x7: /* STM */ CounterMode = CounterModeTimer; break;
+                    case 0x8: /* GEC */ *D = Counter->value(); break;
+                    case 0x9: /* ETQ */ CounterToggleQ = true; break;
+
+                    case 0xA: /* XIE */ *XIE = true;  break;
+                    case 0xB: /* XID */ *XIE = false; break;
+                    case 0xC: /* CIE */ *CIE = true;  break;
+                    case 0xD: /* CID */ *CIE = false; break;
+                    default: IllegalInstruction(); break;
+                    }
+                    break;
+
+                case 0x1: IllegalInstruction(); break;
+
+                case 0x2: /* DBNZ */
+
+                    if(ProcessorType == CDP1806A)
+                    {
+                        *R[*N] = *R[*N] - 1;
+                        if(*R[*N] != 0)
+                            *R[*P] = (M[*R[*P]] << 8) + M[*R[*P] + 1];
+                        else
+                            *R[*P] = *R[*P] + 2;
+                    }
+                    else
+                        IllegalInstruction();
+                    break;
+
+                case 0x3: /* BCI / BXI */
+
+                    switch(*N)
+                    {
+                    case 0xE: /* BCI */
+
+                        if(CounterInterrupt)
+                        {
+                            R[*P]->setLow(M[*R[*P]]);
+                            CounterInterrupt = false;
+                            CounterToggleQ = false;
+                        }
+                        else
+                            *R[*P] = *R[*P] + 1;
+                        break;
+
+                    case 0xF: /* BXI */
+
+                        if(ExternalInterrupt > 0)
+                            R[*P]->setLow(M[*R[*P]]);
+                        else
+                            *R[*P] = *R[*P] + 1;
+                        break;
+
+                    default:
+
+                        IllegalInstruction();
+                        break;
+                    }
+
+                    break;
+
+                case 0x4: IllegalInstruction(); break;
+                case 0x5: IllegalInstruction(); break;
+
+                case 0x6: /* RLXA */
+
+                    *R[*N] = (M[*R[*X]] << 8) + M[*R[*X] + 1];
+                    *R[*X] = *R[*X] + 2;
+                    break;
+
+                case 0x7:
+
+                    switch(*N)
+                    {
+                    case 0x6: /* DSAV */
+
+                        M[*R[*X] - 1] = *T;
+                        M[*R[*X] - 2] = d;
+                        Temp = d & 1; d >>= 1; d |= df << 7; df = Temp;
+                        M[*R[*X] -3 ] = d;
+                        *R[*X] = *R[*X] - 3;
+                        break;
+
+                    default:
+
+                        IllegalInstruction();
+                        break;
+                    }
+                    break;
+
+                case 0x8: /* SCAL */
+
+                    M[*R[*X]] = R[*N]->low();
+                    M[*R[*X] - 1] = R[*N]->high();
+                    *R[*X] = *R[*X] - 2;
+                    *R[*N] = R[*P]->value();
+                    *R[*P] = (M[*R[*N]] << 8) + M[*R[*N] + 1];
+                    *R[*N] = *R[*N] + 2;
+                    break;
+
+                case 0x9: /* SRET */
+
+                    *R[*P] = R[*N]->value();
+                    *R[*N] = (M[*R[*X] + 1] << 8) + M[*R[*X] + 2];
+                    *R[*X] = *R[*X] + 2;
+
+                    break;
+
+                case 0xA: /* RSXD */
+
+                    M[*R[*X]] = R[*N]->low();
+                    M[*R[*X] - 1] = R[*N]->high();
+                    *R[*X] = *R[*X] - 2;
+                    break;
+
+                case 0xB: /* RNX */
+
+                    *R[*X] = R[*N]->value();
+                    break;
+
+                case 0xC: /* RLDI */
+
+                    R[*N]->setHigh(M[*R[*P]]);
+                    R[*N]->setLow(M[*R[*P] + 1]);
+                    *R[*P] = *R[*P] + 2;
+                    break;
+
+                case 0xD: IllegalInstruction(); break;
+                case 0xE: IllegalInstruction(); break;
+                case 0xF: break;
+                }
+            }
             break;
 
-        case 0x9: /* INP P1 */ emit Inp1(Temp); d = Temp; M[*R[*X]] = Temp; break;
-        case 0xA: /* INP P2 */ emit Inp2(Temp); d = Temp; M[*R[*X]] = Temp; break;
-        case 0xB: /* INP P3 */ emit Inp3(Temp); d = Temp; M[*R[*X]] = Temp; break;
-        case 0xC: /* INP P4 */ emit Inp4(Temp); d = Temp; M[*R[*X]] = Temp; break;
-        case 0xD: /* INP P5 */ emit Inp5(Temp); d = Temp; M[*R[*X]] = Temp; break;
-        case 0xE: /* INP P6 */ emit Inp6(Temp); d = Temp; M[*R[*X]] = Temp; break;
-        case 0xF: /* INP P7 */ emit Inp7(Temp); d = Temp; M[*R[*X]] = Temp; break;
+        case 0x9: /* INP P1 */ Temp=0xFF; emit Inp1(Temp); d = Temp; M[*R[*X]] = Temp; break;
+        case 0xA: /* INP P2 */ Temp=0xFF; emit Inp2(Temp); d = Temp; M[*R[*X]] = Temp; break;
+        case 0xB: /* INP P3 */ Temp=0xFF; emit Inp3(Temp); d = Temp; M[*R[*X]] = Temp; break;
+        case 0xC: /* INP P4 */ Temp=0xFF; emit Inp4(Temp); d = Temp; M[*R[*X]] = Temp; break;
+        case 0xD: /* INP P5 */ Temp=0xFF; emit Inp5(Temp); d = Temp; M[*R[*X]] = Temp; break;
+        case 0xE: /* INP P6 */ Temp=0xFF; emit Inp6(Temp); d = Temp; M[*R[*X]] = Temp; break;
+        case 0xF: /* INP P7 */ Temp=0xFF; emit Inp7(Temp); d = Temp; M[*R[*X]] = Temp; break;
         }
         break;
 
@@ -361,7 +569,7 @@ void Processor::ExecuteInstruction()
         case 0x3: /* STXD */ M[*R[*X]] = d; *R[*X] = *R[*X] - 1; break;
         case 0x4: /* ADC  */ d = d + M[*R[*X]] + df; df = d >> 8; break;
         case 0x5: /* SDB  */ d |= 0x0100; d = M[*R[*X]] - d - (df^1); df = d >> 8; break;
-        case 0x6: /* SHRC */ d |= df << 8; df = d & 0x01; d = d >> 1; break;
+        case 0x6: /* SHRC */ Temp = d & 1; d >>= 1; d |= df << 7; df = Temp; break;
         case 0x7: /* SMB  */ d |= 0x0100; d = d - M[*R[*X]] - (df^1); df = d >> 8; break;
         case 0x8: /* SAV  */ M[*R[*X]] = *T; break;
         case 0x9: /* MARK */ *T = (*X << 4) + *P; M[*R[2]] = *T; *X = P->value(); *R[2] = *R[2] -1; break;
@@ -369,7 +577,7 @@ void Processor::ExecuteInstruction()
         case 0xB: /* SEQ  */ *Q = true; emit QSignal(true); break;
         case 0xC: /* ADCI */ d = d + M[*R[*P]] + df; df = d >> 8; *R[*P] = *R[*P] +1; break;
         case 0xD: /* SDBI */ d |= 0x0100; d = M[*R[*P]] - d - (df^1); df = d >> 8; *R[*P] = *R[*P] +1; break;
-        case 0xE: /* SHLC */ d = (d << 1) + df; df = d >> 8; break;
+        case 0xE: /* SHLC */ Temp = (d & 0x80) >> 7; d <<= 1; d |= df; df = Temp; break;
         case 0xF: /* SMBI */ d |= 0x0100; d = d - M[*R[*P]] - (df^1); df = d >> 8; *R[*P] = *R[*P] +1; break;
         }
         break;
@@ -496,7 +704,7 @@ void Processor::ExecuteInstruction()
         case 0x3: /* XOR  */ d = d ^ M[*R[*X]]; break;
         case 0x4: /* ADD  */ d = d + M[*R[*X]]; df = d >> 8; break;
         case 0x5: /* SD   */ d |= 0x0100; d = M[*R[*X]] - d; df = d >> 8; break;
-        case 0x6: /* SHR  */ df = d & 1; d = d >> 1; break;
+        case 0x6: /* SHR  */ df = d & 1; d >>= 1; break;
         case 0x7: /* SM   */ d |= 0x0100; d = d - M[*R[*X]]; df = d >> 8; break;
         case 0x8: /* LDI  */ d = M[*R[*P]]; *R[*P] = *R[*P] + 1; break;
         case 0x9: /* ORI  */ d = d | M[*R[*P]]; *R[*P] = *R[*P] + 1; break;
@@ -504,12 +712,12 @@ void Processor::ExecuteInstruction()
         case 0xB: /* XRI  */ d = d ^ M[*R[*P]]; *R[*P] = *R[*P] + 1; break;
         case 0xC: /* ADI  */ d = d + M[*R[*P]]; df = d >> 8; *R[*P] = *R[*P] + 1; break;
         case 0xD: /* SDI  */ d |= 0x0100; d = M[*R[*P]] - d; df = d >> 8; *R[*P] = *R[*P] + 1; break;
-        case 0xE: /* SHL  */ d = d << 1;  df = d >> 8; break;
+        case 0xE: /* SHL  */ df = (d & 0x80) >> 7; d <<= 1; break;
         case 0xF: /* SMI  */ d |= 0x0100; d = d - M[*R[*P]]; df = d >> 8; *R[*P] = *R[*P] + 1; break;
         }
     }
     // Update D and DF in the UI
-    *D = d & 0xFF;
+    *D = d;
     *DF = df & 0x01;
     M.setPosition(*R[*P]);
 
@@ -529,8 +737,6 @@ void Processor::ExecuteInstruction()
     C.movePosition(QTextCursor::Down, QTextCursor::MoveAnchor);
     C.movePosition(QTextCursor::EndOfLine, QTextCursor::KeepAnchor);
     ui->Disassembly->setTextCursor(C);
-
-
 }
 
 Processor::~Processor()

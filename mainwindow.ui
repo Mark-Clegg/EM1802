@@ -39,6 +39,16 @@
     <property name="title">
      <string>Processor</string>
     </property>
+    <widget class="QMenu" name="menuProcessor_Type">
+     <property name="title">
+      <string>Processor Type</string>
+     </property>
+     <addaction name="actionCDP1802"/>
+     <addaction name="actionCDP1806"/>
+     <addaction name="actionCDP1806A"/>
+    </widget>
+    <addaction name="menuProcessor_Type"/>
+    <addaction name="separator"/>
     <addaction name="actionRun"/>
     <addaction name="actionStop"/>
     <addaction name="actionStep"/>
@@ -95,18 +105,6 @@
     <string>Ctrl+O</string>
    </property>
   </action>
-  <action name="actionRun">
-   <property name="icon">
-    <iconset theme="media-playback-start">
-     <normaloff>.</normaloff>.</iconset>
-   </property>
-   <property name="text">
-    <string>Run</string>
-   </property>
-   <property name="shortcut">
-    <string>F5</string>
-   </property>
-  </action>
   <action name="actionReset">
    <property name="icon">
     <iconset theme="system-reboot">
@@ -147,6 +145,45 @@
    </property>
    <property name="text">
     <string>Stop</string>
+   </property>
+  </action>
+  <action name="actionCDP1802">
+   <property name="checkable">
+    <bool>true</bool>
+   </property>
+   <property name="text">
+    <string>CDP1802</string>
+   </property>
+  </action>
+  <action name="actionCDP1806">
+   <property name="checkable">
+    <bool>true</bool>
+   </property>
+   <property name="text">
+    <string>CDP804/5/6</string>
+   </property>
+  </action>
+  <action name="actionCDP1806A">
+   <property name="checkable">
+    <bool>true</bool>
+   </property>
+   <property name="text">
+    <string>CDP1804/5/6A</string>
+   </property>
+  </action>
+  <action name="actionRun">
+   <property name="icon">
+    <iconset theme="media-playback-start">
+     <normaloff>.</normaloff>.</iconset>
+   </property>
+   <property name="text">
+    <string>Run</string>
+   </property>
+   <property name="toolTip">
+    <string>Run</string>
+   </property>
+   <property name="shortcut">
+    <string>F5</string>
    </property>
   </action>
  </widget>

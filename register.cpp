@@ -1,5 +1,7 @@
 #include "register.h"
 
+constexpr uint16_t Register::Mask[5];
+
 Register::Register(QWidget *parent)
     : QWidget(parent)
 {
@@ -91,14 +93,14 @@ uint16_t Register::value()
 
 void Register::setValue(uint16_t i)
 {
-    Value.Word = i;
+    Value.Word = i & Mask[digits];
     RegisterValue->setText(QString("%1").arg(Value.Word,digits,16,QLatin1Char('0')).toUpper());
     emit valueChanged(Value.Word);
     }
 
 void Register::operator=(int i)
 {
-    Value.Word = i;
+    Value.Word = i & Mask[digits];
     RegisterValue->setText(QString("%1").arg(Value.Word,digits,16,QLatin1Char('0')).toUpper());
     emit valueChanged(Value.Word);
 }

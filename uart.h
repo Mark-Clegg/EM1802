@@ -19,6 +19,7 @@ class UART : public QDockWidget
     };
 
 private:
+    Ui::UART *ui;
     ParityFlag Parity;
 
 public:
@@ -27,7 +28,7 @@ public:
 
 signals:
     void TxChar(QChar);
-    void Interrupt();
+    void Interrupt(bool);
 
 public slots:
     void RxChar(QChar);
@@ -37,7 +38,6 @@ public slots:
     void Write(uint8_t);
 
 private:
-    Ui::UART *ui;
 };
 
 

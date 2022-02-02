@@ -5,6 +5,7 @@
 #include <QSplitter>
 #include <QPlainTextEdit>
 #include <QFileDialog>
+#include <QActionGroup>
 #include "processor.h"
 #include "memory.h"
 #include "uart.h"
@@ -27,6 +28,7 @@ public slots:
 
 private:
     Ui::MainWindow *ui;
+    QActionGroup *ProcessorTypeActionGroup;
     QSplitter *TopBottomSplitter;
     QSplitter *LeftRightSplitter;
     QSplitter *PeripheralSplitter;

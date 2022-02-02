@@ -17,6 +17,8 @@ private:
         };
     } Value;
 
+    static constexpr uint16_t Mask[5] = { 0x0000, 0x000F, 0x00FF, 0x0FFF, 0xFFFF };
+
     QHBoxLayout *Layout;
     QLabel *Identifier;
     QLineEdit *RegisterValue;

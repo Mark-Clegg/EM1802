@@ -22,6 +22,8 @@ UART::UART(QWidget *parent) :
     ui->IE->setOnColour(Qt::green);
     ui->Break->setOnColour(Qt::green);
     ui->TR->setOnColour(Qt::green);
+
+    ui->InterruptFlag->setOnColour(Qt::green);
 }
 
 void UART::Reset()
@@ -43,6 +45,8 @@ void UART::Reset()
     ui->RxHR->setNibbleCount(2);
 
     *ui->RSel = false;
+
+    *ui->InterruptFlag = false;
 }
 
 void UART::SetQ(bool Q)
@@ -56,8 +60,11 @@ void UART::RxChar(QChar c)
         *ui->OE = true;
     *ui->RxHR = c.toLatin1();
     *ui->DA = true;
-    if(*ui->IE)
-        emit Interrupt();
+    if(*ui->IE & !*ui->InterruptFlag)
+    {
+        *ui->InterruptFlag = true;
+        emit Interrupt(true);
+    }
 }
 
 void UART::Read(uint8_t & d)
@@ -73,6 +80,11 @@ void UART::Read(uint8_t & d)
         d |= *ui->PE ? 0x04 : 0;
         d |= *ui->OE ? 0x02 : 0;
         d |= *ui->DA ? 0x01 : 0;
+        if(*ui->IE && *ui->InterruptFlag)
+        {
+            *ui->InterruptFlag = false;
+            emit Interrupt(false);
+        }
     }
     else    // Read Receive Holding Register
     {
@@ -101,6 +113,12 @@ void UART::Write(uint8_t d)
             *ui->IE = (d & 0x20) == 0x20;
             *ui->Break = (d & 0x40) == 0x40;
             *ui->TR = (d & 0x80) == 0x80;
+
+            if(!*ui->IE && *ui->InterruptFlag)
+            {
+                *ui->InterruptFlag = false;
+                emit Interrupt(false);
+            }
         }
     }
     else    // Write Transmit Holding Register
@@ -108,6 +126,11 @@ void UART::Write(uint8_t d)
         *ui->THRE = false;
         emit TxChar(d);
         *ui->THRE = true;
+        if(*ui->IE && *ui->InterruptFlag)
+        {
+            *ui->InterruptFlag = false;
+            emit Interrupt(false);
+        }
     }
 }
 
