@@ -19,6 +19,7 @@ Processor::Processor(QWidget *parent, Memory &RAM) :
 
     QFontMetrics fm(font);
     ui->Disassembly->setMinimumWidth(fm.horizontalAdvance(DisassemblyTemplate)+35);
+    ui->Disassembly->setMaximumBlockCount(DisassemblerLines);
 
     ui->CDP1806->setVisible(false);
 
