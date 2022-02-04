@@ -48,11 +48,16 @@ private:
     int ExternalInterrupt = 0;
     bool CounterInterrupt = false;
     bool CounterToggleQ = false;
+    int TotalTicks = 0;
 
     CounterModeEnum CounterMode = CounterModeStopped;
     uint8_t CounterHoldingRegister;
+    void DecrementCounter();
 
     enum ProcessorType ProcessorType = CDP1802;
+
+    uint8_t BCD_Add(uint8_t, uint8_t, uint16_t &);
+    uint8_t BCD_Subtract(uint8_t, uint8_t, uint16_t &);
 
     Register *R[16];
 
