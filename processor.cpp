@@ -788,16 +788,15 @@ void Processor::ExecuteInstruction()
 
         // Update Disassembly
         QTextCursor C = ui->Disassembly->textCursor();
+        // Delete all except the first two lines
         C.setPosition(0);
-        C.movePosition(QTextCursor::Down, QTextCursor::KeepAnchor);
-        C.removeSelectedText();
-
+        C.movePosition(QTextCursor::Down, QTextCursor::MoveAnchor);
         C.movePosition(QTextCursor::EndOfLine, QTextCursor::MoveAnchor);
         C.movePosition(QTextCursor::End, QTextCursor::KeepAnchor);
         C.removeSelectedText();
-
+        // Append new Disassembly
         ui->Disassembly->appendPlainText(Disassemble(*R[*P], DisassemblerLines - 1));
-
+        // Select the second line
         C.setPosition(0);
         C.movePosition(QTextCursor::Down, QTextCursor::MoveAnchor);
         C.movePosition(QTextCursor::EndOfLine, QTextCursor::KeepAnchor);
