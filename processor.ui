@@ -7,13 +7,13 @@
     <x>0</x>
     <y>0</y>
     <width>450</width>
-    <height>624</height>
+    <height>647</height>
    </rect>
   </property>
   <property name="minimumSize">
    <size>
     <width>450</width>
-    <height>612</height>
+    <height>647</height>
    </size>
   </property>
   <property name="features">
@@ -353,57 +353,91 @@
       </property>
      </widget>
     </item>
-    <item row="3" column="1" rowspan="2">
+    <item row="1" column="1">
      <widget class="QGroupBox" name="CDP1806">
       <property name="title">
        <string>CDP1806 Counter Timer</string>
       </property>
       <layout class="QGridLayout" name="gridLayout">
-       <item row="0" column="0">
-        <widget class="IndicatorLED" name="XIE">
-         <property name="text">
-          <string>XIE</string>
-         </property>
-        </widget>
-       </item>
-       <item row="0" column="1">
-        <widget class="IndicatorLED" name="CIE">
-         <property name="text">
-          <string>CIE</string>
-         </property>
-        </widget>
-       </item>
-       <item row="1" column="0" colspan="2">
+       <item row="1" column="0">
         <widget class="Register" name="Cntr"/>
+       </item>
+       <item row="2" column="0">
+        <widget class="QLabel" name="CounterMode">
+         <property name="text">
+          <string>Counter Mode</string>
+         </property>
+        </widget>
        </item>
       </layout>
      </widget>
     </item>
-    <item row="4" column="0">
-     <widget class="IndicatorLED" name="IE">
-      <property name="minimumSize">
-       <size>
-        <width>0</width>
-        <height>22</height>
-       </size>
+    <item row="5" column="1" rowspan="2">
+     <widget class="QGroupBox" name="groupBox_5">
+      <property name="title">
+       <string>Active Interrupts</string>
       </property>
-      <property name="text">
-       <string>IE</string>
-      </property>
+      <layout class="QHBoxLayout" name="horizontalLayout_2">
+       <item>
+        <widget class="IndicatorLED" name="XI">
+         <property name="text">
+          <string>External</string>
+         </property>
+        </widget>
+       </item>
+       <item>
+        <widget class="IndicatorLED" name="CI">
+         <property name="text">
+          <string>Counter</string>
+         </property>
+        </widget>
+       </item>
+      </layout>
      </widget>
     </item>
-    <item row="3" column="0">
-     <widget class="IndicatorLED" name="Q">
-      <property name="minimumSize">
-       <size>
-        <width>0</width>
-        <height>22</height>
-       </size>
-      </property>
-      <property name="text">
-       <string>Q</string>
-      </property>
-     </widget>
+    <item row="1" column="0" rowspan="6">
+     <layout class="QVBoxLayout" name="verticalLayout_4">
+      <item>
+       <widget class="IndicatorLED" name="Q">
+        <property name="minimumSize">
+         <size>
+          <width>0</width>
+          <height>22</height>
+         </size>
+        </property>
+        <property name="text">
+         <string>Q</string>
+        </property>
+       </widget>
+      </item>
+      <item>
+       <widget class="IndicatorLED" name="IE">
+        <property name="minimumSize">
+         <size>
+          <width>0</width>
+          <height>22</height>
+         </size>
+        </property>
+        <property name="text">
+         <string>IE</string>
+        </property>
+       </widget>
+      </item>
+      <item>
+       <widget class="IndicatorLED" name="XIE">
+        <property name="text">
+         <string>XIE</string>
+        </property>
+       </widget>
+      </item>
+      <item>
+       <widget class="IndicatorLED" name="CIE">
+        <property name="text">
+         <string>CIE</string>
+        </property>
+       </widget>
+      </item>
+     </layout>
     </item>
    </layout>
   </widget>

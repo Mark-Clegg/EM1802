@@ -53,6 +53,8 @@ private:
     CounterModeEnum CounterMode = CounterModeStopped;
     uint8_t CounterHoldingRegister;
     void DecrementCounter();
+    void SetCounterMode(CounterModeEnum);
+    void SetCounterInterrupt(bool);
 
     enum ProcessorType ProcessorType = CDP1802;
 
@@ -74,6 +76,8 @@ private:
     IndicatorLED *IE;
     IndicatorLED *XIE;
     IndicatorLED *CIE;
+    IndicatorLED *XI;
+    IndicatorLED *CI;
 
     ExternalFlag *EF1;
     ExternalFlag *EF2;

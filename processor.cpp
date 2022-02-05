@@ -21,7 +21,7 @@ Processor::Processor(QWidget *parent, Memory &RAM) :
     ui->Disassembly->setMinimumWidth(fm.horizontalAdvance(DisassemblyTemplate)+35);
     ui->Disassembly->setMaximumBlockCount(DisassemblerLines);
 
-    ui->CDP1806->setVisible(false);
+    SetType(CDP1802);
 
     Clock = new QTimer(this);
     Clock->setInterval(1023);
@@ -60,6 +60,8 @@ Processor::Processor(QWidget *parent, Memory &RAM) :
     IE = ui->IE;
     XIE = ui->XIE;
     CIE = ui->CIE;
+    XI = ui->XI;
+    CI = ui->CI;
 
     Counter = ui->Cntr;
 
@@ -91,6 +93,12 @@ Processor::Processor(QWidget *parent, Memory &RAM) :
     CIE->setOnColour(Qt::green);
     CIE->setOffColour(Qt::red);
 
+    XI->setOnColour(Qt::green);
+    XI->setOffColour(Qt::black);
+
+    CI->setOnColour(Qt::green);
+    CI->setOffColour(Qt::black);
+
     connect(X, &Register::valueChanged, this, &Processor::XChanged);
     connect(P, &Register::valueChanged, this, &Processor::PChanged);
     connect(Clock, &QTimer::timeout, this, &Processor::ExecuteInstruction);
@@ -105,8 +113,8 @@ Processor::Processor(QWidget *parent, Memory &RAM) :
 
             if(!State)
             {
-                CounterMode = CounterModeStopped;
-                CounterInterrupt = true;
+                SetCounterMode(CounterModeStopped);
+                SetCounterInterrupt(true);
             }
             break;
 
@@ -123,8 +131,8 @@ Processor::Processor(QWidget *parent, Memory &RAM) :
 
             if(!State)
             {
-                CounterMode = CounterModeStopped;
-                CounterInterrupt = true;
+                SetCounterMode(CounterModeStopped);
+                SetCounterInterrupt(true);
             }
             break;
 
@@ -144,11 +152,11 @@ void Processor::MasterReset()
     *IE = 1;
     *XIE = 1;
     *CIE = 1;
-    CounterMode = CounterModeStopped;
+    SetCounterMode(CounterModeStopped);
     *R[0] = 0;
     Idle = false;
     ExternalInterrupt = 0;
-    CounterInterrupt = false;;
+    SetCounterInterrupt(false);
     CounterToggleQ = false;
     M.setPosition(0);
     ui->Disassembly->clear();
@@ -168,6 +176,9 @@ void Processor::SetType(enum ProcessorType ProcessorType)
     this->ProcessorType = ProcessorType;
 
     ui->CDP1806->setVisible(ProcessorType != CDP1802);
+    ui->XIE->setVisible(ProcessorType != CDP1802);
+    ui->CIE->setVisible(ProcessorType != CDP1802);
+    ui->CI->setVisible(ProcessorType != CDP1802);
 }
 
 void Processor::Load()
@@ -176,13 +187,33 @@ void Processor::Load()
     *R[0] = *R[0] + 1;
 }
 
+void Processor::SetCounterMode(CounterModeEnum Mode)
+{
+    CounterMode = Mode;
+    switch(CounterMode)
+    {
+    case CounterModeStopped:       ui->CounterMode->setText("Counter Stopped"); break;
+    case CounterModeTimer:         ui->CounterMode->setText("Timer Mode");     break;
+    case CounterModeEventCounter1: ui->CounterMode->setText("Event Counter 1"); break;
+    case CounterModeEventCounter2: ui->CounterMode->setText("Event Counter 2"); break;
+    case CounterModePulseMeasure1: ui->CounterMode->setText("Pulse Measure 1"); break;
+    case CounterModePulseMeasure2: ui->CounterMode->setText("Pulse Measure 2"); break;
+    }
+}
+
+void Processor::SetCounterInterrupt(bool State)
+{
+    CounterInterrupt = State;
+    *CI = State;
+}
+
 void Processor::DecrementCounter()
 {
     *Counter = *Counter - 1;
     if(*Counter <= 0)
     {
         *Counter = CounterHoldingRegister;
-        CounterInterrupt = true;
+        SetCounterInterrupt(true);
 
         if(CounterToggleQ)
             *Q = !*Q;
@@ -216,6 +247,7 @@ void Processor::Interrupt(bool State)
     else
         if(ExternalInterrupt > 0)
             ExternalInterrupt --;
+    *ui->XI = ExternalInterrupt > 0;
 }
 
 void Processor::DMAIn(uint8_t i)
@@ -446,12 +478,12 @@ void Processor::ExecuteInstruction()
 
                         switch(*N)
                         {
-                        case 0x0: /* STPC */ CounterMode = CounterModeStopped; break;
+                        case 0x0: /* STPC */ SetCounterMode(CounterModeStopped); break;
                         case 0x1: /* DTC  */ DecrementCounter(); break;
-                        case 0x2: /* SPM2 */ CounterMode = CounterModePulseMeasure2; break;
-                        case 0x3: /* SCM2 */ CounterMode = CounterModeEventCounter2; break;
-                        case 0x4: /* SPM1 */ CounterMode = CounterModePulseMeasure1; break;
-                        case 0x5: /* SCM1 */ CounterMode = CounterModeEventCounter1; break;
+                        case 0x2: /* SPM2 */ SetCounterMode(CounterModePulseMeasure2); break;
+                        case 0x3: /* SCM2 */ SetCounterMode(CounterModeEventCounter2); break;
+                        case 0x4: /* SPM1 */ SetCounterMode(CounterModePulseMeasure1); break;
+                        case 0x5: /* SCM1 */ SetCounterMode(CounterModeEventCounter1); break;
 
                         case 0x6: /* LDC  */
 
@@ -459,12 +491,12 @@ void Processor::ExecuteInstruction()
                             if(CounterMode == CounterModeStopped)
                             {
                                 CounterHoldingRegister = d;
-                                CounterInterrupt = false;
+                                SetCounterInterrupt(false);
                                 CounterToggleQ = false;
                             }
                             break;
 
-                        case 0x7: /* STM */ CounterMode = CounterModeTimer; TotalTicks = 0; break;
+                        case 0x7: /* STM */ SetCounterMode(CounterModeTimer); TotalTicks = 0; break;
                         case 0x8: /* GEC */ d = Counter->value(); break;
                         case 0x9: /* ETQ */ CounterToggleQ = true; break;
 
@@ -503,7 +535,7 @@ void Processor::ExecuteInstruction()
                             if(CounterInterrupt)
                             {
                                 R[*P]->setLow(M[*R[*P]]);
-                                CounterInterrupt = false;
+                                SetCounterInterrupt(false);
                                 CounterToggleQ = false;
                             }
                             else
