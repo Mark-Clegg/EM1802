@@ -101,7 +101,15 @@ Processor::Processor(QWidget *parent, Memory &RAM) :
         switch(CounterMode)
         {
         case CounterModeEventCounter1: if(State) DecrementCounter(); break;
-        case CounterModePulseMeasure1: if(!State) CounterMode = CounterModeStopped; CounterInterrupt = true; break;
+        case CounterModePulseMeasure1:
+
+            if(!State)
+            {
+                CounterMode = CounterModeStopped;
+                CounterInterrupt = true;
+            }
+            break;
+
         default: break;
         }
     });
@@ -111,7 +119,15 @@ Processor::Processor(QWidget *parent, Memory &RAM) :
         switch(CounterMode)
         {
         case CounterModeEventCounter2: if(State) DecrementCounter(); break;
-        case CounterModePulseMeasure2: if(!State) CounterMode = CounterModeStopped; CounterInterrupt = true; break;
+        case CounterModePulseMeasure2:
+
+            if(!State)
+            {
+                CounterMode = CounterModeStopped;
+                CounterInterrupt = true;
+            }
+            break;
+
         default: break;
         }
     });
@@ -167,6 +183,9 @@ void Processor::DecrementCounter()
     {
         *Counter = CounterHoldingRegister;
         CounterInterrupt = true;
+
+        if(CounterToggleQ)
+            *Q = !*Q;
     }
 }
 
@@ -436,17 +455,17 @@ void Processor::ExecuteInstruction()
 
                         case 0x6: /* LDC  */
 
-                            *Counter = D->value();
+                            *Counter = d;
                             if(CounterMode == CounterModeStopped)
                             {
-                                CounterHoldingRegister = D->value();
+                                CounterHoldingRegister = d;
                                 CounterInterrupt = false;
                                 CounterToggleQ = false;
                             }
                             break;
 
                         case 0x7: /* STM */ CounterMode = CounterModeTimer; TotalTicks = 0; break;
-                        case 0x8: /* GEC */ *D = Counter->value(); break;
+                        case 0x8: /* GEC */ d = Counter->value(); break;
                         case 0x9: /* ETQ */ CounterToggleQ = true; break;
 
                         case 0xA: /* XIE */ *XIE = true;  break;
@@ -529,14 +548,14 @@ void Processor::ExecuteInstruction()
                                 M[*R[*X] - 1] = *T;
                                 M[*R[*X] - 2] = d;
                                 Temp = d & 1; d >>= 1; d |= df << 7; df = Temp;
-                                M[*R[*X] -3 ] = d;
+                                M[*R[*X] - 3 ] = d;
                                 *R[*X] = *R[*X] - 3;
                                 Ticks += 2;
                                 break;
 
                             case 0x7: /* DSMB */ d = BCD_Subtract(d, M[*R[*X]], df); break;
-                            case 0xC: /* DACI */ d = BCD_Add(d, M[*R[*P]], df); R[*P] = R[*P] + 1; break;
-                            case 0xF: /* DSBI */ d = BCD_Subtract(d, M[*R[*P]], df); R[*P] = R[*P] + 1; break;
+                            case 0xC: /* DACI */ d = BCD_Add(d, M[*R[*P]], df); *R[*P] = *R[*P] + 1; break;
+                            case 0xF: /* DSBI */ d = BCD_Subtract(d, M[*R[*P]], df); *R[*P] = *R[*P] + 1; break;
 
                             default:
 
@@ -600,8 +619,8 @@ void Processor::ExecuteInstruction()
                             {
                             case 0x4: /* DADD */ df = 0; d = BCD_Add(d, M[*R[*X]], df); break;
                             case 0x7: /* DSM  */ df = 1; d = BCD_Subtract(d, M[*R[*X]], df); break;
-                            case 0xC: /* DADI */ df = 0; d = BCD_Add(d, M[*R[*P]], df); R[*P] = R[*P] + 1; break;
-                            case 0xF: /* DSMI */ df = 1; d = BCD_Subtract(d, M[*R[*P]], df); R[*P] = R[*P] + 1; break;
+                            case 0xC: /* DADI */ df = 0; d = BCD_Add(d, M[*R[*P]], df); *R[*P] = *R[*P] + 1; break;
+                            case 0xF: /* DSMI */ df = 1; d = BCD_Subtract(d, M[*R[*P]], df); *R[*P] = *R[*P] + 1; break;
                             default: IllegalInstruction(); break;
                             }
                             Ticks += 2;
@@ -809,6 +828,10 @@ void Processor::ExecuteInstruction()
         TotalTicks = 0;
         DecrementCounter();
     }
+
+    if(((CounterMode == CounterModePulseMeasure1) & *EF1) || ((CounterMode == CounterModePulseMeasure2) & *EF2))
+        for(int i=0; i < Ticks; i++)
+            DecrementCounter();
 }
 
 Processor::~Processor()
