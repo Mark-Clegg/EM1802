@@ -38,12 +38,17 @@ public:
 
     void SetType(enum ProcessorType);
 
+protected:
+  bool eventFilter(QObject *obj, QEvent *event) override;
+
 private:
     QTimer *Clock;
     void IllegalInstruction();
     QString Disassemble(uint16_t, int);
     QString DisassemblyLine(const int &, const QStringList &, const QString &, const QStringList &);
     const QString DisassemblyTemplate;
+    int LineHeight;
+    int DisassemblerLines;
 
     int ExternalInterrupt = 0;
     bool CounterInterrupt = false;

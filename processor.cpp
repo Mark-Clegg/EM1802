@@ -2,8 +2,6 @@
 #include "ui_processor.h"
 #include <cmath>
 
-#define DisassemblerLines 7
-
 Processor::Processor(QWidget *parent, Memory &RAM) :
     QDockWidget(parent),
     DisassemblyTemplate("ADDR  -- -- -- --  OPCODE--------"),
@@ -19,7 +17,8 @@ Processor::Processor(QWidget *parent, Memory &RAM) :
 
     QFontMetrics fm(font);
     ui->Disassembly->setMinimumWidth(fm.horizontalAdvance(DisassemblyTemplate)+35);
-    ui->Disassembly->setMaximumBlockCount(DisassemblerLines);
+    LineHeight = fm.height();
+    ui->Disassembly->installEventFilter(this);
 
     SetType(CDP1802);
 
@@ -141,6 +140,24 @@ Processor::Processor(QWidget *parent, Memory &RAM) :
     });
 
     MasterReset();
+}
+
+bool Processor::eventFilter(QObject *obj, QEvent *event)
+{
+    if (event->type() == QEvent::Resize && obj == ui->Disassembly)
+    {
+        QResizeEvent *resizeEvent = static_cast<QResizeEvent*>(event);
+        DisassemblerLines = resizeEvent->size().height() / LineHeight - 1;
+        ui->Disassembly->setMaximumBlockCount(DisassemblerLines);
+        ui->Disassembly->appendPlainText(DisassemblyTemplate);
+        ui->Disassembly->appendPlainText(Disassemble(*R[*P], DisassemblerLines - 1));
+        QTextCursor C = ui->Disassembly->textCursor();
+        C.setPosition(0);
+        C.movePosition(QTextCursor::Down, QTextCursor::MoveAnchor);
+        C.movePosition(QTextCursor::EndOfLine, QTextCursor::KeepAnchor);
+        ui->Disassembly->setTextCursor(C);
+    }
+    return QWidget::eventFilter(obj, event);
 }
 
 void Processor::MasterReset()

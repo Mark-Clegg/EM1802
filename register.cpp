@@ -16,7 +16,7 @@ Register::Register(QWidget *parent)
     Identifier->setText(this->objectName());
 
     RegisterValue = new QLineEdit(this);
-    RegisterValue->setInputMask("HHHH");
+    RegisterValue->setInputMask("HHHH;0");
     RegisterValue->setPlaceholderText("0000");
     RegisterValue->setFont(QFont("DEC Terminal"));
     RegisterValue->setAlignment(Qt::AlignHCenter);
@@ -33,7 +33,6 @@ Register::Register(QWidget *parent)
     Layout->addWidget(RIndicator);
     setLayout(Layout);
 
-//    QObject::connect(RegisterValue, &QLineEdit::editingFinished, this, &Register::set);
     QObject::connect(RegisterValue, &QLineEdit::textEdited, this, &Register::set);
     QObject::connect(this, &Register::objectNameChanged, Identifier, &QLabel::setText);
 }
@@ -53,13 +52,13 @@ int Register::nibbleCount()
 void Register::setNibbleCount(int i)
 {
     digits = i;
-    RegisterValue->setInputMask(QString::fromStdString(std::string(i,'H')));
+    RegisterValue->setInputMask(QString::fromStdString(std::string(i,'H'))+";0");
     RegisterValue->setPlaceholderText(QString::fromStdString(std::string(i,'0')));
 }
 
 void Register::setInputMask(char c)
 {
-    RegisterValue->setInputMask(QString::fromStdString(std::string(digits,c)));
+    RegisterValue->setInputMask(QString::fromStdString(std::string(digits,c))+";0");
 }
 
 uint8_t Register::high()
