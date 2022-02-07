@@ -44,6 +44,15 @@ MainWindow::MainWindow(QWidget *parent) :
     ui->actionStep->setEnabled(true);
     ui->actionLoad->setEnabled(true);
 
+    DMALoader = new QLineEdit(this);
+    DMALoader->setInputMask("HH;0");
+    DMALoader->setPlaceholderText("00");
+    DMALoader->setFont(QFont("DEC Terminal"));
+    DMALoader->setAlignment(Qt::AlignHCenter);
+    DMALoader->setMaximumWidth(50);
+
+    ui->toolBar->insertWidget(ui->actionLoad, DMALoader);
+
     connect(ui->actionRun, &QAction::triggered, this, [this](bool)
     {
         ui->actionRun->setEnabled(false);
@@ -63,7 +72,8 @@ MainWindow::MainWindow(QWidget *parent) :
     });
 
     connect(ui->actionStep, &QAction::triggered, CPU, &Processor::ExecuteInstruction);
-    connect(ui->actionLoad, &QAction::triggered, CPU, &Processor::Load);
+    connect(ui->actionLoad, &QAction::triggered, this, &MainWindow::Load);
+    connect(DMALoader, &QLineEdit::returnPressed, this, &MainWindow::Load);
 
     connect(ui->actionReset, &QAction::triggered, this, [this](bool)
     {
@@ -116,6 +126,15 @@ void MainWindow::FileOpen()
     ui->actionStep->setEnabled(true);
     ui->actionLoad->setEnabled(true);
     CPU->MasterReset();
+}
+
+void MainWindow::Load()
+{
+    bool conversionStatus;
+    uint8_t Value = DMALoader->displayText().toUInt(&conversionStatus, 16);
+    CPU->DMAIn(Value);
+    DMALoader->setFocus();
+    DMALoader->selectAll();
 }
 
 MainWindow::~MainWindow()

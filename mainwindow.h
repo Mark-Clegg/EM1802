@@ -36,6 +36,8 @@ private:
     Memory *RAM;
     UART *Uart;
     Console *SerialConsole;
+    QLineEdit *DMALoader;
+    void Load();
 };
 
 #endif // MAINWINDOW_H

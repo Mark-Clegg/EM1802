@@ -40,7 +40,7 @@ Register::Register(QWidget *parent)
 void Register::set()
 {
     bool conversionStatus;
-    Value.Word = RegisterValue->text().toUInt(&conversionStatus, 16);
+    Value.Word = RegisterValue->displayText().toUInt(&conversionStatus, 16);
     emit valueChanged(Value.Word);
 }
 

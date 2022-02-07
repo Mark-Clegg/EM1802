@@ -198,12 +198,6 @@ void Processor::SetType(enum ProcessorType ProcessorType)
     ui->CI->setVisible(ProcessorType != CDP1802);
 }
 
-void Processor::Load()
-{
-    M[*R[0]] = *D;
-    *R[0] = *R[0] + 1;
-}
-
 void Processor::SetCounterMode(CounterModeEnum Mode)
 {
     CounterMode = Mode;

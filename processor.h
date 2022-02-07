@@ -124,7 +124,6 @@ public slots:
     void ExecuteInstruction();
     void Run();
     void Stop();
-    void Load();
     void MasterReset();
 
 private:
