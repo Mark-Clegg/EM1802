@@ -20,6 +20,7 @@ MainWindow::MainWindow(QWidget *parent) :
     Uart = new UART(PeripheralSplitter);
     CPU = new Processor(LeftRightSplitter, *RAM);
     SerialConsole = new Console(TopBottomSplitter);
+    DMALoader = new QLineEdit(this);
 
     TopBottomSplitter->addWidget(LeftRightSplitter);
     TopBottomSplitter->addWidget(SerialConsole);
@@ -43,8 +44,8 @@ MainWindow::MainWindow(QWidget *parent) :
     ui->actionStop->setEnabled(false);
     ui->actionStep->setEnabled(true);
     ui->actionLoad->setEnabled(true);
+    DMALoader->setEnabled(true);
 
-    DMALoader = new QLineEdit(this);
     DMALoader->setInputMask("HH;0");
     DMALoader->setPlaceholderText("00");
     DMALoader->setFont(QFont("DEC Terminal"));
@@ -59,6 +60,7 @@ MainWindow::MainWindow(QWidget *parent) :
         ui->actionStop->setEnabled(true);
         ui->actionStep->setEnabled(false);
         ui->actionLoad->setEnabled(false);
+        DMALoader->setEnabled(false);
         CPU->Run();
     });
 
@@ -68,6 +70,7 @@ MainWindow::MainWindow(QWidget *parent) :
         ui->actionStop->setEnabled(false);
         ui->actionStep->setEnabled(true);
         ui->actionLoad->setEnabled(true);
+        DMALoader->setEnabled(true);
         CPU->Stop();
     });
 
@@ -81,6 +84,7 @@ MainWindow::MainWindow(QWidget *parent) :
         ui->actionStop->setEnabled(false);
         ui->actionStep->setEnabled(true);
         ui->actionLoad->setEnabled(true);
+        DMALoader->setEnabled(true);
         CPU->MasterReset();
     });
 
@@ -125,6 +129,7 @@ void MainWindow::FileOpen()
     ui->actionStop->setEnabled(false);
     ui->actionStep->setEnabled(true);
     ui->actionLoad->setEnabled(true);
+    DMALoader->setEnabled(true);
     CPU->MasterReset();
 }
 
