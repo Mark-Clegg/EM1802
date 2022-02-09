@@ -38,6 +38,38 @@ private:
     Console *SerialConsole;
     QLineEdit *DMALoader;
     void Load();
+    void LoadWord(uint16_t);
+    QTimer *ErrorResetTimer;
+    bool ParsePort(QString, uint16_t &);
+    bool ParseRegister(QString, uint16_t &);
+
+    enum OpCodeType
+    {
+        None,
+        Register,
+        Port,
+        Byte,
+        Word,
+        RegWord
+    };
+
+    class OpCode
+    {
+    public:
+        OpCodeType Type;
+        uint16_t   Code;
+
+        OpCode() { }
+
+        OpCode(OpCodeType T, uint16_t value)
+        {
+            Type = T;
+            Code = value;
+        }
+    };
+
+
+    static QMap<QString, OpCode> OpCodeTable;
 };
 
 #endif // MAINWINDOW_H

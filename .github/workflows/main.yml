@@ -1,6 +1,6 @@
 # This workflow creates an application distribution zip file and uploads it as an Action artifact.
 
-name: CI
+name: Windows-CI
 
 # Controls when the workflow will run
 on:

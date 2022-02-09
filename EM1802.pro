@@ -14,6 +14,7 @@ SOURCES += \
     indicatorled.cpp \
     main.cpp \
     mainwindow.cpp \
+    mainwindow_assembler.cpp \
     memory.cpp \
     processor.cpp \
     processor_bcd.cpp \
