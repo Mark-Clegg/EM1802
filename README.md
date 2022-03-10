@@ -35,6 +35,11 @@ byte will display in hex rather than disassembly. (e.g. at reset the first instr
 The CDP1854 UART is pre-configured in mode 1 (1802 mode) and uses I/O Port 3, with Q controlling RSEL. EM1802 displays the current values 
 of the Status, Control, Transmit and Receive Holding registers.
 
+## IDE
+
+The IDE emulator implements an 8 bit PIO Mode IDE interface. Output Port 2 selects the IDE Register, and I/O Port 1 reads and writes data to that port.
+Currently only single sector transfers are supported, in either LBA28, or CHS Mode (untested). (Note: this is a very early and as yet incomplete implementation)
+
 # Building EM1802
 
 EM1802 is written in C++ and utilises QT 5.2. It builds on Linux as a QTCreator project.
