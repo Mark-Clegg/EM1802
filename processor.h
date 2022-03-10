@@ -128,7 +128,7 @@ public slots:
 
 private:
     Ui::Processor *ui;
-    bool Idle = false;
+    bool Running = false;
     Memory &M;
 
 };

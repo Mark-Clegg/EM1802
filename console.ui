@@ -6,26 +6,27 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>400</width>
-    <height>150</height>
+    <width>263</width>
+    <height>171</height>
    </rect>
-  </property>
-  <property name="minimumSize">
-   <size>
-    <width>400</width>
-    <height>150</height>
-   </size>
   </property>
   <property name="features">
    <set>QDockWidget::NoDockWidgetFeatures</set>
   </property>
   <property name="windowTitle">
-   <string>Console</string>
+   <string>Serial Console</string>
   </property>
   <widget class="QWidget" name="dockWidgetContents">
    <layout class="QGridLayout" name="gridLayout">
     <item row="0" column="0">
-     <widget class="QPlainTextEdit" name="ScreenBuffer"/>
+     <widget class="QPlainTextEdit" name="ScreenBuffer">
+      <property name="undoRedoEnabled">
+       <bool>false</bool>
+      </property>
+      <property name="maximumBlockCount">
+       <number>100</number>
+      </property>
+     </widget>
     </item>
    </layout>
   </widget>

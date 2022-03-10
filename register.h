@@ -3,6 +3,7 @@
 #include <QtWidgets/QLineEdit>
 #include <QtWidgets/QLabel>
 #include <QtWidgets/QHBoxLayout>
+#include <QRegularExpression>
 
 class Register : public QWidget
 {
@@ -33,6 +34,8 @@ public:
     int nibbleCount();
     void setNibbleCount(int);
     void setInputMask(char);
+
+    void setStyle(int, int, int, Qt::Alignment);
 
     uint8_t high();
     void setHigh(uint8_t);

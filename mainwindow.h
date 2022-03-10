@@ -9,6 +9,7 @@
 #include "processor.h"
 #include "memory.h"
 #include "uart.h"
+#include "ide.h"
 #include "console.h"
 
 namespace Ui {
@@ -24,16 +25,22 @@ public:
     ~MainWindow();
 
 public slots:
+    void Break(QString);
     void FileOpen();
+    void CreateDiskImage();
+    void MountDiskImage();
+    void UnMountDiskImage();
 
 private:
     Ui::MainWindow *ui;
     QActionGroup *ProcessorTypeActionGroup;
-    QSplitter *TopBottomSplitter;
-    QSplitter *LeftRightSplitter;
-    QSplitter *PeripheralSplitter;
+    QSplitter *ColumnSplitter;
+    QSplitter *LeftSplitter;
+    QSplitter *CentralSplitter;
+    QSplitter *RightSplitter;
     Processor *CPU;
     Memory *RAM;
+    IDE *HardDrive;
     UART *Uart;
     Console *SerialConsole;
     QLineEdit *DMALoader;

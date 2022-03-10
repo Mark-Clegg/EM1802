@@ -7,34 +7,41 @@ MainWindow::MainWindow(QWidget *parent) :
 {
     ui->setupUi(this);
 
-    TopBottomSplitter = new QSplitter(Qt::Vertical, this);
-    LeftRightSplitter = new QSplitter(Qt::Horizontal, TopBottomSplitter);
-    PeripheralSplitter = new QSplitter(Qt::Vertical, LeftRightSplitter);
+    ColumnSplitter = new QSplitter(Qt::Horizontal, this);
+
+    LeftSplitter = new QSplitter(Qt::Vertical, ColumnSplitter);
+    CentralSplitter = new QSplitter(Qt::Vertical, ColumnSplitter);
+    RightSplitter = new QSplitter(Qt::Vertical, ColumnSplitter);
 
     this->setStyleSheet("QSplitter::handle{background-color: black;}");
-    TopBottomSplitter->setChildrenCollapsible(false);
-    LeftRightSplitter->setChildrenCollapsible(false);
-    PeripheralSplitter->setChildrenCollapsible(false);
+    ColumnSplitter->setChildrenCollapsible(false);
+    LeftSplitter->setChildrenCollapsible(false);
+    CentralSplitter->setChildrenCollapsible(false);
+    RightSplitter->setChildrenCollapsible(false);
 
-    RAM = new Memory(PeripheralSplitter);
-    Uart = new UART(PeripheralSplitter);
-    CPU = new Processor(LeftRightSplitter, *RAM);
-    SerialConsole = new Console(TopBottomSplitter);
+    RAM = new Memory(LeftSplitter);
+    CPU = new Processor(RightSplitter, *RAM);
+    Uart = new UART(CentralSplitter);
+    SerialConsole = new Console(CentralSplitter);
+    HardDrive = new IDE(LeftSplitter);
 
     DMALoader = new QLineEdit(this);
     ErrorResetTimer = new QTimer(this);
     ErrorResetTimer->setSingleShot(true);
 
-    TopBottomSplitter->addWidget(LeftRightSplitter);
-    TopBottomSplitter->addWidget(SerialConsole);
+    ColumnSplitter->addWidget(LeftSplitter);
+    ColumnSplitter->addWidget(CentralSplitter);
+    ColumnSplitter->addWidget(RightSplitter);
 
-    LeftRightSplitter->addWidget(PeripheralSplitter);
-    LeftRightSplitter->addWidget(CPU);
+    setCentralWidget(ColumnSplitter);
 
-    PeripheralSplitter->addWidget(RAM);
-    PeripheralSplitter->addWidget(Uart);
+    LeftSplitter->addWidget(CPU);
 
-    setCentralWidget(TopBottomSplitter);
+    CentralSplitter->addWidget(Uart);
+    CentralSplitter->addWidget(SerialConsole);
+
+    RightSplitter->addWidget(RAM);
+    RightSplitter->addWidget(HardDrive);
 
     ProcessorTypeActionGroup = new QActionGroup(this);
     ProcessorTypeActionGroup->addAction(ui->actionCDP1802);
@@ -51,6 +58,7 @@ MainWindow::MainWindow(QWidget *parent) :
 
     DMALoader->setFont(QFont("DEC Terminal"));
     DMALoader->setMaximumWidth(125);
+    DMALoader->setPlaceholderText("Hex/Assembler");
 
     ui->toolBar->insertWidget(ui->actionLoad, DMALoader);
 
@@ -96,31 +104,42 @@ MainWindow::MainWindow(QWidget *parent) :
     connect(ui->actionCDP1806,  &QAction::toggled, this, [this](bool state){ if(state) CPU->SetType(CDP1806);});
     connect(ui->actionCDP1806A, &QAction::toggled, this, [this](bool state){ if(state) CPU->SetType(CDP1806A);});
 
+    connect(CPU, &Processor::Reset, HardDrive, &IDE::Reset);
     connect(CPU, &Processor::Reset, Uart, &UART::Reset);
     connect(CPU, &Processor::Reset, SerialConsole, &Console::Clear);
 
-    connect(CPU, &Processor::Break, this, [this](QString Reason)
-    {
-        ui->actionRun->setEnabled(true);
-        ui->actionStop->setEnabled(false);
-        ui->actionStep->setEnabled(true);
-        ui->actionLoad->setEnabled(true);
-        QMessageBox msgBox;
-        msgBox.setText(Reason);
-        msgBox.exec();
-    });
+    connect(CPU, &Processor::Break, this, &MainWindow::Break);
+    connect(HardDrive, &IDE::Break, this, &MainWindow::Break);
 
-    connect(CPU, &Processor::QSignal, Uart, &UART::SetQ);
-
-    connect(Uart, &UART::Interrupt, CPU, &Processor::Interrupt);
+    // Connect the Console to the UART
     connect(Uart, &UART::TxChar, SerialConsole, &Console::Output);
     connect(SerialConsole, &Console::Input, Uart, &UART::RxChar);
 
+    // Connect the UART to the Processor
+    connect(CPU, &Processor::QSignal, Uart, &UART::SetQ);
+    connect(Uart, &UART::Interrupt, CPU, &Processor::Interrupt);
     connect(CPU, &Processor::Inp3, Uart, &UART::Read);
     connect(CPU, &Processor::Out3, Uart, &UART::Write);
 
-    Uart->Reset();
+    // Connect the IDE Drive to the Processor
+    connect(CPU, &Processor::Inp1, HardDrive, &IDE::Read);
+    connect(CPU, &Processor::Out1, HardDrive, &IDE::Write);
+    connect(CPU, &Processor::Out2, HardDrive, &IDE::RegisterSelect);
+
+    CPU->MasterReset();
 }
+
+void MainWindow::Break(QString Reason)
+{
+    CPU->Stop();
+    ui->actionRun->setEnabled(true);
+    ui->actionStop->setEnabled(false);
+    ui->actionStep->setEnabled(true);
+    ui->actionLoad->setEnabled(true);
+    QMessageBox msgBox;
+    msgBox.setText(Reason);
+    msgBox.exec();
+};
 
 void MainWindow::FileOpen()
 {
@@ -135,6 +154,39 @@ void MainWindow::FileOpen()
     ui->actionLoad->setEnabled(true);
     DMALoader->setEnabled(true);
     CPU->MasterReset();
+}
+
+void MainWindow::CreateDiskImage()
+{
+    QString fileName = QFileDialog::getSaveFileName(this,
+            "Create Disk Image", "",
+            "Elf Disk image (*.disk)");
+    if(fileName != "")
+    {
+        QFile ImageFile(fileName);
+        // Create the file
+        if(ImageFile.open(QIODevice::ReadWrite))
+        {
+            ImageFile.resize(64 * 1024 * 1024);
+            ImageFile.close();
+        }
+        HardDrive->Mount(fileName);
+    }
+}
+
+void MainWindow::MountDiskImage()
+{
+    QString fileName = QFileDialog::getOpenFileName(this,
+            "Mount Disk Image", "",
+            "Elf Disk image (*.disk)");
+    if(fileName != "")
+        HardDrive->Mount(fileName);
+
+}
+
+void MainWindow::UnMountDiskImage()
+{
+    HardDrive->UnMount();
 }
 
 void MainWindow::Load()
@@ -299,9 +351,6 @@ void MainWindow::LoadWord(uint16_t word)
     }
 }
 
-
-// FIX THIS!!!!!
-
 bool MainWindow::ParsePort(QString Port, uint16_t & out)
 {
     static const QRegularExpression Matcher("^\\s*p([1-7])\\s*$", QRegularExpression::CaseInsensitiveOption);
@@ -334,4 +383,3 @@ MainWindow::~MainWindow()
 {
     delete ui; ui = nullptr;
 }
-

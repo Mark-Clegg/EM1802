@@ -1,0 +1,594 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ui version="4.0">
+ <class>IDE</class>
+ <widget class="QDockWidget" name="IDE">
+  <property name="geometry">
+   <rect>
+    <x>0</x>
+    <y>0</y>
+    <width>512</width>
+    <height>547</height>
+   </rect>
+  </property>
+  <property name="toolTip">
+   <string/>
+  </property>
+  <property name="features">
+   <set>QDockWidget::NoDockWidgetFeatures</set>
+  </property>
+  <property name="windowTitle">
+   <string>IDE Controller</string>
+  </property>
+  <widget class="QWidget" name="dockWidgetContents">
+   <layout class="QGridLayout" name="gridLayout">
+    <item row="1" column="0" colspan="4">
+     <widget class="QGroupBox" name="groupBox_2">
+      <property name="title">
+       <string>Error Register</string>
+      </property>
+      <layout class="QHBoxLayout" name="horizontalLayout_2">
+       <item>
+        <widget class="QLabel" name="ErrorLIndicator">
+         <property name="minimumSize">
+          <size>
+           <width>5</width>
+           <height>30</height>
+          </size>
+         </property>
+         <property name="maximumSize">
+          <size>
+           <width>5</width>
+           <height>30</height>
+          </size>
+         </property>
+         <property name="text">
+          <string/>
+         </property>
+        </widget>
+       </item>
+       <item>
+        <widget class="IndicatorLED" name="ErrorBBK">
+         <property name="toolTip">
+          <string>Bad Block</string>
+         </property>
+         <property name="text">
+          <string>BBK</string>
+         </property>
+        </widget>
+       </item>
+       <item>
+        <widget class="IndicatorLED" name="ErrorUNC">
+         <property name="toolTip">
+          <string>Uncorrectable Data</string>
+         </property>
+         <property name="text">
+          <string>UNC</string>
+         </property>
+        </widget>
+       </item>
+       <item>
+        <widget class="IndicatorLED" name="ErrorMC">
+         <property name="toolTip">
+          <string>Media Changed</string>
+         </property>
+         <property name="text">
+          <string>MC</string>
+         </property>
+        </widget>
+       </item>
+       <item>
+        <widget class="IndicatorLED" name="ErrorIDNF">
+         <property name="toolTip">
+          <string>ID Mark Not Found</string>
+         </property>
+         <property name="text">
+          <string>IDNF</string>
+         </property>
+        </widget>
+       </item>
+       <item>
+        <widget class="IndicatorLED" name="ErrorMCR">
+         <property name="toolTip">
+          <string>Media Change Request</string>
+         </property>
+         <property name="text">
+          <string>MCR</string>
+         </property>
+        </widget>
+       </item>
+       <item>
+        <widget class="IndicatorLED" name="ErrorABRT">
+         <property name="toolTip">
+          <string>Command Aborted</string>
+         </property>
+         <property name="text">
+          <string>ABRT</string>
+         </property>
+        </widget>
+       </item>
+       <item>
+        <widget class="IndicatorLED" name="ErrorTZNF">
+         <property name="toolTip">
+          <string>Track Zero Not Found</string>
+         </property>
+         <property name="text">
+          <string>TZNF</string>
+         </property>
+        </widget>
+       </item>
+       <item>
+        <widget class="IndicatorLED" name="ErrorAMNF">
+         <property name="toolTip">
+          <string>Address Mark Not Found</string>
+         </property>
+         <property name="text">
+          <string>AMNF</string>
+         </property>
+        </widget>
+       </item>
+       <item>
+        <widget class="QLabel" name="ErrorRIndicator">
+         <property name="minimumSize">
+          <size>
+           <width>5</width>
+           <height>30</height>
+          </size>
+         </property>
+         <property name="maximumSize">
+          <size>
+           <width>5</width>
+           <height>30</height>
+          </size>
+         </property>
+         <property name="text">
+          <string/>
+         </property>
+        </widget>
+       </item>
+      </layout>
+     </widget>
+    </item>
+    <item row="0" column="0" colspan="4">
+     <widget class="QGroupBox" name="groupBox">
+      <property name="title">
+       <string>Status Register</string>
+      </property>
+      <layout class="QHBoxLayout" name="horizontalLayout">
+       <item>
+        <widget class="QLabel" name="StatusLIndicator">
+         <property name="minimumSize">
+          <size>
+           <width>5</width>
+           <height>30</height>
+          </size>
+         </property>
+         <property name="maximumSize">
+          <size>
+           <width>5</width>
+           <height>30</height>
+          </size>
+         </property>
+         <property name="text">
+          <string/>
+         </property>
+        </widget>
+       </item>
+       <item>
+        <widget class="IndicatorLED" name="StatusBSY">
+         <property name="toolTip">
+          <string>Drive Busy</string>
+         </property>
+         <property name="text">
+          <string>BUSY</string>
+         </property>
+        </widget>
+       </item>
+       <item>
+        <widget class="IndicatorLED" name="StatusDRDY">
+         <property name="toolTip">
+          <string>Drive Ready</string>
+         </property>
+         <property name="text">
+          <string>DRDY</string>
+         </property>
+        </widget>
+       </item>
+       <item>
+        <widget class="IndicatorLED" name="StatusDF">
+         <property name="toolTip">
+          <string>Drive Write Fault</string>
+         </property>
+         <property name="text">
+          <string>DF</string>
+         </property>
+        </widget>
+       </item>
+       <item>
+        <widget class="IndicatorLED" name="StatusDSC">
+         <property name="toolTip">
+          <string>Drive Seek Complete</string>
+         </property>
+         <property name="text">
+          <string>DSC</string>
+         </property>
+        </widget>
+       </item>
+       <item>
+        <widget class="IndicatorLED" name="StatusDRQ">
+         <property name="toolTip">
+          <string>Data Request Ready</string>
+         </property>
+         <property name="text">
+          <string>DRQ</string>
+         </property>
+        </widget>
+       </item>
+       <item>
+        <widget class="IndicatorLED" name="StatusCORR">
+         <property name="toolTip">
+          <string>Data Corrected</string>
+         </property>
+         <property name="text">
+          <string>CORR</string>
+         </property>
+        </widget>
+       </item>
+       <item>
+        <widget class="IndicatorLED" name="StatusIDX">
+         <property name="toolTip">
+          <string>Index</string>
+         </property>
+         <property name="text">
+          <string>IDX</string>
+         </property>
+        </widget>
+       </item>
+       <item>
+        <widget class="IndicatorLED" name="StatusERR">
+         <property name="toolTip">
+          <string>Error</string>
+         </property>
+         <property name="text">
+          <string>ERR</string>
+         </property>
+        </widget>
+       </item>
+       <item>
+        <widget class="QLabel" name="StatusRIndicator">
+         <property name="minimumSize">
+          <size>
+           <width>5</width>
+           <height>30</height>
+          </size>
+         </property>
+         <property name="maximumSize">
+          <size>
+           <width>5</width>
+           <height>30</height>
+          </size>
+         </property>
+         <property name="text">
+          <string/>
+         </property>
+        </widget>
+       </item>
+      </layout>
+     </widget>
+    </item>
+    <item row="2" column="1">
+     <layout class="QVBoxLayout" name="verticalLayout_4">
+      <property name="spacing">
+       <number>6</number>
+      </property>
+      <item>
+       <widget class="QGroupBox" name="groupBox_3">
+        <property name="title">
+         <string>Features</string>
+        </property>
+        <layout class="QHBoxLayout" name="horizontalLayout_3">
+         <item>
+          <widget class="QLabel" name="FeaturesLIndicator">
+           <property name="minimumSize">
+            <size>
+             <width>5</width>
+             <height>30</height>
+            </size>
+           </property>
+           <property name="maximumSize">
+            <size>
+             <width>5</width>
+             <height>25</height>
+            </size>
+           </property>
+           <property name="text">
+            <string/>
+           </property>
+          </widget>
+         </item>
+         <item>
+          <widget class="IndicatorLED" name="Feature8Bit">
+           <property name="toolTip">
+            <string>8 Bit Mode</string>
+           </property>
+           <property name="text">
+            <string>8Bit</string>
+           </property>
+          </widget>
+         </item>
+         <item>
+          <widget class="QLabel" name="FeaturesRIndicator">
+           <property name="minimumSize">
+            <size>
+             <width>5</width>
+             <height>30</height>
+            </size>
+           </property>
+           <property name="maximumSize">
+            <size>
+             <width>5</width>
+             <height>30</height>
+            </size>
+           </property>
+           <property name="text">
+            <string/>
+           </property>
+          </widget>
+         </item>
+        </layout>
+       </widget>
+      </item>
+      <item>
+       <widget class="QGroupBox" name="groupBox_4">
+        <property name="title">
+         <string>Device Control</string>
+        </property>
+        <layout class="QHBoxLayout" name="horizontalLayout_4">
+         <item>
+          <widget class="QLabel" name="DeviceControlLIndicator">
+           <property name="minimumSize">
+            <size>
+             <width>5</width>
+             <height>30</height>
+            </size>
+           </property>
+           <property name="maximumSize">
+            <size>
+             <width>5</width>
+             <height>30</height>
+            </size>
+           </property>
+           <property name="text">
+            <string/>
+           </property>
+          </widget>
+         </item>
+         <item>
+          <widget class="IndicatorLED" name="ControlReset">
+           <property name="toolTip">
+            <string>Reset Device</string>
+           </property>
+           <property name="text">
+            <string>Reset</string>
+           </property>
+          </widget>
+         </item>
+         <item>
+          <widget class="IndicatorLED" name="ControlNIEN">
+           <property name="toolTip">
+            <string>Disable Interrupts</string>
+           </property>
+           <property name="text">
+            <string>NIEN</string>
+           </property>
+          </widget>
+         </item>
+         <item>
+          <widget class="QLabel" name="DeviceControlRIndicator">
+           <property name="minimumSize">
+            <size>
+             <width>5</width>
+             <height>0</height>
+            </size>
+           </property>
+           <property name="maximumSize">
+            <size>
+             <width>5</width>
+             <height>16777215</height>
+            </size>
+           </property>
+           <property name="text">
+            <string/>
+           </property>
+          </widget>
+         </item>
+        </layout>
+       </widget>
+      </item>
+      <item>
+       <widget class="QGroupBox" name="groupBox_7">
+        <property name="title">
+         <string>Active Interrupts</string>
+        </property>
+        <layout class="QHBoxLayout" name="horizontalLayout_5">
+         <item>
+          <widget class="QLabel" name="labelFiller">
+           <property name="minimumSize">
+            <size>
+             <width>5</width>
+             <height>30</height>
+            </size>
+           </property>
+           <property name="maximumSize">
+            <size>
+             <width>5</width>
+             <height>30</height>
+            </size>
+           </property>
+           <property name="text">
+            <string/>
+           </property>
+          </widget>
+         </item>
+         <item>
+          <widget class="IndicatorLED" name="Interrupt">
+           <property name="text">
+            <string>Interrupt</string>
+           </property>
+          </widget>
+         </item>
+        </layout>
+       </widget>
+      </item>
+     </layout>
+    </item>
+    <item row="2" column="2">
+     <layout class="QVBoxLayout" name="verticalLayout">
+      <item>
+       <widget class="QGroupBox" name="groupBox_6">
+        <property name="title">
+         <string>Command / Data</string>
+        </property>
+        <layout class="QVBoxLayout" name="verticalLayout_3">
+         <item>
+          <widget class="Register" name="Command"/>
+         </item>
+         <item>
+          <widget class="QLabel" name="CommandName">
+           <property name="text">
+            <string/>
+           </property>
+           <property name="alignment">
+            <set>Qt::AlignCenter</set>
+           </property>
+          </widget>
+         </item>
+         <item>
+          <widget class="Register" name="Data"/>
+         </item>
+        </layout>
+       </widget>
+      </item>
+      <item>
+       <widget class="QGroupBox" name="groupBox_8">
+        <property name="title">
+         <string>Drive Mode</string>
+        </property>
+        <layout class="QHBoxLayout" name="horizontalLayout_6">
+         <item>
+          <widget class="QLabel" name="ModeLIndicator">
+           <property name="minimumSize">
+            <size>
+             <width>5</width>
+             <height>30</height>
+            </size>
+           </property>
+           <property name="maximumSize">
+            <size>
+             <width>5</width>
+             <height>30</height>
+            </size>
+           </property>
+           <property name="text">
+            <string/>
+           </property>
+          </widget>
+         </item>
+         <item>
+          <widget class="IndicatorLED" name="Master">
+           <property name="text">
+            <string>Master</string>
+           </property>
+          </widget>
+         </item>
+         <item>
+          <widget class="QLabel" name="Mode">
+           <property name="text">
+            <string/>
+           </property>
+          </widget>
+         </item>
+         <item>
+          <widget class="QLabel" name="ModeRIndicator">
+           <property name="minimumSize">
+            <size>
+             <width>5</width>
+             <height>30</height>
+            </size>
+           </property>
+           <property name="maximumSize">
+            <size>
+             <width>5</width>
+             <height>30</height>
+            </size>
+           </property>
+           <property name="text">
+            <string/>
+           </property>
+          </widget>
+         </item>
+        </layout>
+       </widget>
+      </item>
+      <item>
+       <widget class="QGroupBox" name="groupBox_9">
+        <property name="title">
+         <string>Attached Disk File</string>
+        </property>
+        <layout class="QHBoxLayout" name="horizontalLayout_7">
+         <item>
+          <widget class="QLabel" name="FileName">
+           <property name="text">
+            <string/>
+           </property>
+           <property name="alignment">
+            <set>Qt::AlignCenter</set>
+           </property>
+          </widget>
+         </item>
+        </layout>
+       </widget>
+      </item>
+     </layout>
+    </item>
+    <item row="2" column="3">
+     <widget class="QGroupBox" name="groupBox_5">
+      <property name="title">
+       <string>Address</string>
+      </property>
+      <layout class="QVBoxLayout" name="verticalLayout_2">
+       <item>
+        <widget class="Register" name="SectorCount"/>
+       </item>
+       <item>
+        <widget class="Register" name="Head"/>
+       </item>
+       <item>
+        <widget class="Register" name="CylinderHigh"/>
+       </item>
+       <item>
+        <widget class="Register" name="CylinderLow"/>
+       </item>
+       <item>
+        <widget class="Register" name="StartSector"/>
+       </item>
+      </layout>
+     </widget>
+    </item>
+   </layout>
+  </widget>
+ </widget>
+ <customwidgets>
+  <customwidget>
+   <class>Register</class>
+   <extends>QLineEdit</extends>
+   <header>register.h</header>
+  </customwidget>
+  <customwidget>
+   <class>IndicatorLED</class>
+   <extends>QLabel</extends>
+   <header>indicatorled.h</header>
+  </customwidget>
+ </customwidgets>
+ <resources/>
+ <connections/>
+</ui>

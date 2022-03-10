@@ -12,6 +12,10 @@ Console::Console(QWidget *parent) :
     QFont font = doc->defaultFont();
     font.setFamily("Courier New");
     doc->setDefaultFont(font);
+
+    QFontMetrics fm(font);
+    ui->ScreenBuffer->setMinimumWidth(fm.horizontalAdvance("X") * 80);
+    ui->ScreenBuffer->setMinimumHeight(fm.height() * 25);
 }
 
 bool Console::eventFilter(QObject *obj, QEvent *event)

@@ -5,27 +5,27 @@ constexpr uint16_t Register::Mask[5];
 Register::Register(QWidget *parent)
     : QWidget(parent)
 {
+    static QRegularExpression CamelCase = QRegularExpression("([a-z])([A-Z])");
     Layout = new QHBoxLayout(this);
     Layout->setSpacing(6);
     Layout->setContentsMargins(0,0,0,0);
 
     Identifier = new QLabel(this);
     Identifier->setAlignment(Qt::AlignCenter);
-    Identifier->setFixedWidth(30);
-
-    Identifier->setText(this->objectName());
 
     RegisterValue = new QLineEdit(this);
     RegisterValue->setInputMask("HHHH;0");
     RegisterValue->setPlaceholderText("0000");
-    RegisterValue->setFont(QFont("DEC Terminal"));
+    RegisterValue->setFont(QFont("Courier New"));
     RegisterValue->setAlignment(Qt::AlignHCenter);
 
     LIndicator = new QLabel(this);
     LIndicator->setFixedWidth(5);
+    LIndicator->setFixedHeight(30);
 
     RIndicator = new QLabel(this);
     RIndicator->setFixedWidth(5);
+    RIndicator->setFixedHeight(30);
 
     Layout->addWidget(Identifier);
     Layout->addWidget(LIndicator);
@@ -34,7 +34,7 @@ Register::Register(QWidget *parent)
     setLayout(Layout);
 
     QObject::connect(RegisterValue, &QLineEdit::textEdited, this, &Register::set);
-    QObject::connect(this, &Register::objectNameChanged, Identifier, &QLabel::setText);
+    QObject::connect(this, &Register::objectNameChanged, Identifier, [this](QString Label) { Identifier->setText(Label.replace(CamelCase,"\\1 \\2"));});
 }
 
 void Register::set()
@@ -54,6 +54,14 @@ void Register::setNibbleCount(int i)
     digits = i;
     RegisterValue->setInputMask(QString::fromStdString(std::string(i,'H'))+";0");
     RegisterValue->setPlaceholderText(QString::fromStdString(std::string(i,'0')));
+}
+
+void Register::setStyle(int Digits, int LabelWidth, int ValueWidth, Qt::Alignment Align)
+{
+    setNibbleCount(Digits);
+    Identifier->setMinimumWidth(LabelWidth);
+    RegisterValue->setMinimumWidth(ValueWidth);
+    Identifier->setAlignment(Align);
 }
 
 void Register::setInputMask(char c)

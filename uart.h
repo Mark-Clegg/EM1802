@@ -2,6 +2,7 @@
 #define UART_H
 
 #include <QDockWidget>
+#include <QLabel>
 
 namespace Ui {
 class UART;
@@ -21,6 +22,8 @@ class UART : public QDockWidget
 private:
     Ui::UART *ui;
     ParityFlag Parity;
+    bool RSel;
+    void SetIndicator(QLabel *, Qt::GlobalColor);
 
 public:
     explicit UART(QWidget *parent = nullptr);

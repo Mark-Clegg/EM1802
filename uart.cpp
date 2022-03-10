@@ -7,9 +7,6 @@ UART::UART(QWidget *parent) :
 {
     ui->setupUi(this);
 
-    ui->RSel->setOnColour(Qt::green);
-    ui->RSel->setOffColour(Qt::black);
-
     ui->DA->setOnColour(Qt::green);
     ui->OE->setOnColour(Qt::red);
     ui->PE->setOnColour(Qt::red);
@@ -24,6 +21,15 @@ UART::UART(QWidget *parent) :
     ui->TR->setOnColour(Qt::green);
 
     ui->InterruptFlag->setOnColour(Qt::green);
+
+    SetIndicator(ui->StatusLIndicator, Qt::black);
+    SetIndicator(ui->StatusRIndicator, Qt::black);
+    SetIndicator(ui->ControlLIndicator, Qt::black);
+    SetIndicator(ui->ControlRIndicator, Qt::black);
+    ui->TxHR->setLIndicator(Qt::black);
+    ui->TxHR->setRIndicator(Qt::black);
+    ui->RxHR->setLIndicator(Qt::black);
+    ui->RxHR->setRIndicator(Qt::black);
 }
 
 void UART::Reset()
@@ -44,14 +50,46 @@ void UART::Reset()
     ui->TxHR->setNibbleCount(2);
     ui->RxHR->setNibbleCount(2);
 
-    *ui->RSel = false;
+    SetQ(false);
 
     *ui->InterruptFlag = false;
 }
 
+void UART::SetIndicator(QLabel *Label, Qt::GlobalColor c)
+{
+    QPalette pal = QPalette();
+
+    pal.setColor(QPalette::Window, c);
+    Label->setAutoFillBackground(true);
+    Label->setPalette(pal);
+}
+
 void UART::SetQ(bool Q)
 {
-    *ui->RSel = Q;
+    RSel = Q;
+
+    if(RSel)
+    {
+        SetIndicator(ui->StatusLIndicator, Qt::green);
+        SetIndicator(ui->StatusRIndicator, Qt::green);
+        SetIndicator(ui->ControlLIndicator, Qt::red);
+        SetIndicator(ui->ControlRIndicator, Qt::red);
+        ui->TxHR->setLIndicator(Qt::black);
+        ui->TxHR->setRIndicator(Qt::black);
+        ui->RxHR->setLIndicator(Qt::black);
+        ui->RxHR->setRIndicator(Qt::black);
+}
+    else
+    {
+        SetIndicator(ui->StatusLIndicator, Qt::black);
+        SetIndicator(ui->StatusRIndicator, Qt::black);
+        SetIndicator(ui->ControlLIndicator, Qt::black);
+        SetIndicator(ui->ControlRIndicator, Qt::black);
+        ui->TxHR->setLIndicator(Qt::red);
+        ui->TxHR->setRIndicator(Qt::red);
+        ui->RxHR->setLIndicator(Qt::green);
+        ui->RxHR->setRIndicator(Qt::green);
+    }
 }
 
 void UART::RxChar(QChar c)
@@ -69,7 +107,7 @@ void UART::RxChar(QChar c)
 
 void UART::Read(uint8_t & d)
 {
-    if(*ui->RSel)   // Read Status Register
+    if(RSel)   // Read Status Register
     {
         d = 0;
         d |= *ui->THRE ? 0x80 : 0;
@@ -99,7 +137,7 @@ void UART::Write(uint8_t d)
     static QString BitString[8] = { ",5,1", ",5,1.5", ",6,1", ",6,2", ",7,1", ",7,2", ",8,1", ",8,2" };
     static QString ParityString[3] = { "N", "O", "E" };
 
-    if(*ui->RSel)   // Write Control Register
+    if(RSel)   // Write Control Register
     {
         if(!*ui->TR || (d & 0x80) == 0x00)
         {
@@ -124,6 +162,7 @@ void UART::Write(uint8_t d)
     else    // Write Transmit Holding Register
     {
         *ui->THRE = false;
+        *ui->TxHR = d;
         emit TxChar(d);
         *ui->THRE = true;
         if(*ui->IE && *ui->InterruptFlag)

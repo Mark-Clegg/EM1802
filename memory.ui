@@ -6,15 +6,9 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>500</width>
-    <height>379</height>
+    <width>334</width>
+    <height>248</height>
    </rect>
-  </property>
-  <property name="minimumSize">
-   <size>
-    <width>490</width>
-    <height>107</height>
-   </size>
   </property>
   <property name="features">
    <set>QDockWidget::NoDockWidgetFeatures</set>
@@ -26,6 +20,9 @@
    <layout class="QGridLayout" name="gridLayout">
     <item row="0" column="0">
      <widget class="QPlainTextEdit" name="MemoryView">
+      <property name="undoRedoEnabled">
+       <bool>false</bool>
+      </property>
       <property name="lineWrapMode">
        <enum>QPlainTextEdit::NoWrap</enum>
       </property>

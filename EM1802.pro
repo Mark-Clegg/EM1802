@@ -1,4 +1,4 @@
-QT       += core gui
+QT       += core gui concurrent
 
 greaterThan(QT_MAJOR_VERSION, 4): QT += widgets
 
@@ -11,6 +11,8 @@ CONFIG += c++11
 SOURCES += \
     console.cpp \
     externalflag.cpp \
+    ide.cpp \
+    ide_backgroundworker.cpp \
     indicatorled.cpp \
     main.cpp \
     mainwindow.cpp \
@@ -25,6 +27,9 @@ SOURCES += \
 HEADERS += \
     console.h \
     externalflag.h \
+    ide.h \
+    ide_backgroundworker.h \
+    ideregister.h \
     indicatorled.h \
     mainwindow.h \
     memory.h \
@@ -34,6 +39,7 @@ HEADERS += \
 
 FORMS += \
     console.ui \
+    ide.ui \
     mainwindow.ui \
     memory.ui \
     processor.ui \

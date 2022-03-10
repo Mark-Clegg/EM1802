@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>1019</width>
-    <height>600</height>
+    <width>696</width>
+    <height>429</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -24,7 +24,7 @@
     <rect>
      <x>0</x>
      <y>0</y>
-     <width>1019</width>
+     <width>696</width>
      <height>22</height>
     </rect>
    </property>
@@ -33,6 +33,11 @@
      <string>&amp;File</string>
     </property>
     <addaction name="actionOpen"/>
+    <addaction name="separator"/>
+    <addaction name="actionCreateDiskImage"/>
+    <addaction name="actionMountDiskImage"/>
+    <addaction name="actionUnMountDiskImage"/>
+    <addaction name="separator"/>
     <addaction name="actionExit"/>
    </widget>
    <widget class="QMenu" name="menuProcessor">
@@ -56,7 +61,6 @@
     <addaction name="actionLoad"/>
     <addaction name="separator"/>
     <addaction name="actionReset"/>
-    <addaction name="separator"/>
    </widget>
    <addaction name="menuFile"/>
    <addaction name="menuProcessor"/>
@@ -183,6 +187,33 @@
     <string>F5</string>
    </property>
   </action>
+  <action name="actionCreateDiskImage">
+   <property name="icon">
+    <iconset theme="drive-harddisk">
+     <normaloff>.</normaloff>.</iconset>
+   </property>
+   <property name="text">
+    <string>Create Disk Image</string>
+   </property>
+  </action>
+  <action name="actionMountDiskImage">
+   <property name="icon">
+    <iconset theme="drive-harddisk">
+     <normaloff>.</normaloff>.</iconset>
+   </property>
+   <property name="text">
+    <string>Mount Disk Image</string>
+   </property>
+  </action>
+  <action name="actionUnMountDiskImage">
+   <property name="icon">
+    <iconset theme="drive-harddisk">
+     <normaloff>.</normaloff>.</iconset>
+   </property>
+   <property name="text">
+    <string>Unmount Disk Image</string>
+   </property>
+  </action>
  </widget>
  <resources/>
  <connections>
@@ -202,8 +233,75 @@
     </hint>
    </hints>
   </connection>
+  <connection>
+   <sender>actionExit</sender>
+   <signal>triggered()</signal>
+   <receiver>MainWindow</receiver>
+   <slot>close()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>-1</x>
+     <y>-1</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>509</x>
+     <y>299</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>actionMountDiskImage</sender>
+   <signal>triggered()</signal>
+   <receiver>MainWindow</receiver>
+   <slot>MountDiskImage()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>-1</x>
+     <y>-1</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>509</x>
+     <y>299</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>actionCreateDiskImage</sender>
+   <signal>triggered()</signal>
+   <receiver>MainWindow</receiver>
+   <slot>CreateDiskImage()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>-1</x>
+     <y>-1</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>509</x>
+     <y>299</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>actionUnMountDiskImage</sender>
+   <signal>triggered()</signal>
+   <receiver>MainWindow</receiver>
+   <slot>UnMountDiskImage()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>-1</x>
+     <y>-1</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>509</x>
+     <y>299</y>
+    </hint>
+   </hints>
+  </connection>
  </connections>
  <slots>
   <slot>FileOpen()</slot>
+  <slot>MountDiskImage()</slot>
+  <slot>UnMountDiskImage()</slot>
+  <slot>CreateDiskImage()</slot>
  </slots>
 </ui>

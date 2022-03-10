@@ -17,6 +17,7 @@ IndicatorLED::IndicatorLED(QWidget *parent)
     Icon->setPixmap(QPixmap::fromImage(*IconOffImage));
 
     Identifier = new QLabel(this);
+    Identifier->setMinimumWidth(40);
 
     Layout->addWidget(Icon);
     Layout->addWidget(Identifier);
