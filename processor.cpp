@@ -84,6 +84,18 @@ Processor::Processor(QWidget *parent, Memory &RAM) :
     CI->setOnColour(Qt::green);
     CI->setOffColour(Qt::black);
 
+    // Enable Double Click on Register Label to scroll address into view in Memory widget
+    for(int i=0; i<0x10; i++)
+        connect(R[i], &Register::doubleClick, &RAM, &Memory::setPosition);
+
+    connect(X, &Register::doubleClick, this, [this](uint16_t X) {
+        M.setPosition(*R[X]);
+    });
+
+    connect(P, &Register::doubleClick, this, [this](uint16_t P) {
+        M.setPosition(*R[P]);
+    });
+
     connect(X, &Register::valueChanged, this, &Processor::XChanged);
     connect(P, &Register::valueChanged, this, &Processor::PChanged);
     connect(Clock, &QTimer::timeout, this, &Processor::ExecuteInstruction);

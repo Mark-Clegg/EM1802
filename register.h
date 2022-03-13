@@ -4,6 +4,7 @@
 #include <QtWidgets/QLabel>
 #include <QtWidgets/QHBoxLayout>
 #include <QRegularExpression>
+#include <QMouseEvent>
 
 class Register : public QWidget
 {
@@ -30,6 +31,8 @@ private:
 public:
     explicit Register(QWidget *parent = nullptr);
     ~Register();
+
+    bool eventFilter(QObject*, QEvent*);
 
     int nibbleCount();
     void setNibbleCount(int);
@@ -59,5 +62,6 @@ public slots:
 
 signals:
     void valueChanged(int);
+    void doubleClick(uint16_t);
 };
 #endif // REGISTER_H

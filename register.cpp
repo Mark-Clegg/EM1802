@@ -33,8 +33,17 @@ Register::Register(QWidget *parent)
     Layout->addWidget(RIndicator);
     setLayout(Layout);
 
+    Identifier->installEventFilter(this);
+
     QObject::connect(RegisterValue, &QLineEdit::textEdited, this, &Register::set);
     QObject::connect(this, &Register::objectNameChanged, Identifier, [this](QString Label) { Identifier->setText(Label.replace(CamelCase,"\\1 \\2"));});
+}
+
+bool Register::eventFilter( QObject* object, QEvent* event)
+{
+    if(object == Identifier && event->type() == QEvent::MouseButtonRelease)
+        emit doubleClick(Value.Word);
+    return false;
 }
 
 void Register::set()
