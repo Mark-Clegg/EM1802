@@ -2,7 +2,7 @@
 RCA CDP1802 Emulator / Debugger
 
 EM1802 is an emulation package for the CDP1802 series of 8 bit microprocessors, popular in early home computers of the 1970's and current
-enthusiast groups. The emulated hardware is based on my Elf-Cube design, providing 64K RAM and CDP1854 Programmable UART.
+enthusiast groups. The emulated hardware is based on my Elf-Cube design, providing 64K RAM, CDP1854 Programmable UART and simple 8 bit IDE interface.
 
 Currently the following features are available:
 

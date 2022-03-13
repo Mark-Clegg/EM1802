@@ -12,7 +12,6 @@ Register::Register(QWidget *parent)
 
     Identifier = new QLabel(this);
     Identifier->setAlignment(Qt::AlignCenter);
-
     RegisterValue = new QLineEdit(this);
     RegisterValue->setInputMask("HHHH;0");
     RegisterValue->setPlaceholderText("0000");
@@ -51,6 +50,11 @@ void Register::set()
     bool conversionStatus;
     Value.Word = RegisterValue->displayText().toUInt(&conversionStatus, 16);
     emit valueChanged(Value.Word);
+}
+
+void Register::setIdentifierCursor(QCursor Cursor)
+{
+    Identifier->setCursor(Cursor);
 }
 
 int Register::nibbleCount()

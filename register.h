@@ -54,6 +54,8 @@ public:
     bool isReadOnly();
     void setReadOnly(bool);
 
+    void setIdentifierCursor(QCursor);
+
     void operator=(int);
     operator int();
 

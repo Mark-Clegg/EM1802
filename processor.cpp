@@ -23,7 +23,8 @@ Processor::Processor(QWidget *parent, Memory &RAM) :
     SetType(CDP1802);
 
     Clock = new QTimer(this);
-    Clock->setInterval(1023);
+    Clock->setInterval(0);
+    ui->ClockSpeed->setSliderPosition(10);
 
     R[ 0] = ui->R0; R[ 0]->setStyle(4, 30, 50, Qt::AlignCenter);
     R[ 1] = ui->R1; R[ 1]->setStyle(4, 30, 50, Qt::AlignCenter);
@@ -84,17 +85,16 @@ Processor::Processor(QWidget *parent, Memory &RAM) :
     CI->setOnColour(Qt::green);
     CI->setOffColour(Qt::black);
 
-    // Enable Double Click on Register Label to scroll address into view in Memory widget
+    // Enable Click on Register, X and P Labels to scroll address into view in Memory widget
     for(int i=0; i<0x10; i++)
-        connect(R[i], &Register::doubleClick, &RAM, &Memory::setPosition);
-
-    connect(X, &Register::doubleClick, this, [this](uint16_t X) {
-        M.setPosition(*R[X]);
-    });
-
-    connect(P, &Register::doubleClick, this, [this](uint16_t P) {
-        M.setPosition(*R[P]);
-    });
+    {
+        connect(R[i], &Register::doubleClick, &M, &Memory::setPosition);
+        R[i]->setIdentifierCursor(Qt::PointingHandCursor);
+    }
+    connect(X, &Register::doubleClick, this, [this](uint16_t X) { M.setPosition(*R[X]); });
+    X->setIdentifierCursor(Qt::PointingHandCursor);
+    connect(P, &Register::doubleClick, this, [this](uint16_t P) { M.setPosition(*R[P]); });
+    P->setIdentifierCursor(Qt::PointingHandCursor);
 
     connect(X, &Register::valueChanged, this, &Processor::XChanged);
     connect(P, &Register::valueChanged, this, &Processor::PChanged);
